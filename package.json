@@ -6,7 +6,7 @@
   "description": "Extenstion that allows to customize cascading picklists for Azure DevOps.",
   "private": true,
   "scripts": {
-    "start": "webpack-dev-server --hot --progress --static ./ --port 44300 --https",
+    "start": "webpack-dev-server --hot --progress --static ./ --port 44300 --https  --config webpack.dev.config.js",
     "build-dev": "webpack --progress --config webpack.dev.config.js",
     "package-dev": "tfx extension create --manifest-globs azure-devops-extension.json --overrides-file configs/dev.json",
     "package-release": "tfx extension create --manifest-globs azure-devops-extension.json --overrides-file configs/release.json",
@@ -15,7 +15,8 @@
     "package": "tfx extension create --manifest-globs azure-devops-extension.json",
     "gallery-publish": "tfx extension publish --rev-version",
     "clean": "rimraf ./dist && rimraf ./*.vsix",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "serve": "webpack serve --config webpack.dev.config.js"
   },
   "dependencies": {
     "azure-devops-extension-api": "^1.152.3",
@@ -52,6 +53,6 @@
     "typescript-styled-plugin": "^0.14.0",
     "webpack": "^5.72.1",
     "webpack-cli": "^4.9.2",
-    "webpack-dev-server": "^4.11.1"
+    "webpack-dev-server": "^4.15.2"
   }
 }

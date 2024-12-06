@@ -5,14 +5,17 @@ const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+console.log('Using webpack.dev.js configuration');
+
 const observerConfig = {
   entry: './src/observer/index.ts',
   mode: 'development',
   output: {
     filename: 'observer.js',
     path: path.resolve(__dirname, 'dist'),
+    publicPath: '/dist/',
   },
-  devtool: 'source-map',
+  devtool: 'eval',
 
   resolve: {
     extensions: ['.json', '.ts', '.tsx', '.js'],
@@ -34,6 +37,17 @@ const observerConfig = {
       filename: 'observer.html',
     }),
   ],
+  devServer: {
+    static: {
+      directory: path.join(__dirname, 'dist'),
+    },
+    compress: true,
+    port: 44300,
+    server: 'https',
+    hot: true,
+    watchFiles: ['src/**/*'],
+    historyApiFallback: true,
+  },
 };
 
 const confighubConfig = {
@@ -43,7 +57,7 @@ const confighubConfig = {
     filename: 'confighub.js',
     path: path.resolve(__dirname, 'dist'),
   },
-  devtool: 'source-map',
+  devtool: 'eval',
 
   resolve: {
     extensions: ['.json', '.ts', '.tsx', '.js'],
