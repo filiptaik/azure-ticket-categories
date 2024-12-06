@@ -50,12 +50,11 @@ SDK.init({
             return;
           }
           await cascadingService.getconfigFieldValues();
-          // Apply cascading rules for all fields in the loaded work item
-          //await cascadingService.cascadeAll();
-
           // Optionally log details about the loaded work item
+          /*
           console.log('Work item details:', workItemLoadedArgs);
           console.log('Cascading rules applied successfully after load');
+          */
         } catch (error) {
           console.error('Error applying cascading rules on load:', error);
         }
@@ -73,7 +72,7 @@ SDK.init({
     await SDK.notifyLoadSucceeded();
   }
 );
-
+/*
 function flipManifestStructure(manifest: Record<string, any>): Record<string, any> {
   const flippedCascades: Record<string, any> = {};
 
@@ -112,3 +111,4 @@ function flipManifestStructure(manifest: Record<string, any>): Record<string, an
     cascades: flippedCascades,
   };
 }
+*/

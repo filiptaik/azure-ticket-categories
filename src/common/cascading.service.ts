@@ -87,7 +87,7 @@ class CascadingFieldsService {
 
       cascadeMap[fieldName] = cascade;
     });
-    console.log('CASCADE MAP: ' + JSON.stringify(cascadeMap));
+    //console.log('CASCADE MAP: ' + JSON.stringify(cascadeMap));
     return cascadeMap;
   }
 
@@ -122,7 +122,7 @@ class CascadingFieldsService {
     const changedFieldValue = (await this.workItemService.getFieldValue(changedFieldReferenceName, {
       returnOriginalValue: false,
     })) as string;
-    console.log('CHANGED STRING VALUE: ' + changedFieldValue);
+    //console.log('CHANGED STRING VALUE: ' + changedFieldValue);
     // Ensure the changed field is the dependent field
     if (
       !Object.values(this.cascadeMap).some(cascade => {
@@ -131,7 +131,7 @@ class CascadingFieldsService {
         });
       })
     ) {
-      console.log(`No cascading configuration for field: ${changedFieldReferenceName}`);
+      //console.log(`No cascading configuration for field: ${changedFieldReferenceName}`);
       return;
     }
 
@@ -143,7 +143,7 @@ class CascadingFieldsService {
       });
     });
 
-    console.log('Affected parent fields:', affectedParentFields);
+    //console.log('Affected parent fields:', affectedParentFields);
 
     // Prepare allowed values for the parent fields
     const fieldValuesToFilter: FieldOptions = {};
@@ -159,7 +159,7 @@ class CascadingFieldsService {
       fieldValuesToFilter[parentField] = matchingParentValues;
     }
 
-    console.log('Field values to filter:', fieldValuesToFilter);
+    //console.log('Field values to filter:', fieldValuesToFilter);
 
     // Apply filtering and auto-select the first allowed value
     return Promise.all(
