@@ -8,15 +8,8 @@ import { WorkItemTrackingRestClient } from 'azure-devops-extension-api/WorkItemT
 import { IWorkItemFormService } from 'azure-devops-extension-api/WorkItemTracking/WorkItemTrackingServices';
 import * as SDK from 'azure-devops-extension-sdk';
 import flatten from 'lodash/flatten';
-import intersection from 'lodash/intersection';
 import uniq from 'lodash/uniq';
-import {
-  CascadeConfiguration,
-  CascadeMap,
-  FieldOptions,
-  FieldOptionsFlags,
-  ICascade,
-} from './types';
+import { CascadeConfiguration, CascadeMap, FieldOptions, ICascade } from './types';
 
 type InvalidField = string;
 
