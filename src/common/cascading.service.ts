@@ -23,7 +23,7 @@ class CascadingFieldsService {
   ) {
     this.workItemService = workItemService;
     this.cascadeMap = this.createCascadingMap(cascadeConfiguration);
-    console.log(JSON.stringify('cascade config OG ' + JSON.stringify(cascadeConfiguration)));
+    //console.log(JSON.stringify('cascade config OG ' + JSON.stringify(cascadeConfiguration)));
     this.fetchAndLogInitialValues();
   }
   private async fetchAndLogInitialValues(): Promise<void> {

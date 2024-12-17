@@ -37,9 +37,8 @@ SDK.init({
     if (manifest == null) {
       manifest = Object.assign({}, ManifestService.defaultManifest);
     }
-
+    let originalReasonValue;
     const cascadingService = new CascadingFieldsService(workItemFormService, manifest.cascades);
-
     const provider: IWorkItemNotificationListener = {
       onLoaded: async (workItemLoadedArgs: IWorkItemLoadedArgs) => {
         //console.log('Work item data' + workItemFormService.getFieldValues);
@@ -50,11 +49,17 @@ SDK.init({
             return;
           }
           await cascadingService.getconfigFieldValues();
-          // Optionally log details about the loaded work item
-          /*
-          console.log('Work item details:', workItemLoadedArgs);
-          console.log('Cascading rules applied successfully after load');
-          */
+
+          const workItemFormService = await SDK.getService<IWorkItemFormService>(
+            WorkItemTrackingServiceIds.WorkItemFormService
+          );
+
+          // Fetch and store the initial value of System.Reason
+          originalReasonValue = await workItemFormService.getFieldValue('System.Reason', {
+            returnOriginalValue: false,
+          });
+
+          console.log(`Original System.Reason value loaded: ${originalReasonValue}`);
         } catch (error) {
           console.error('Error applying cascading rules on load:', error);
         }
@@ -65,6 +70,36 @@ SDK.init({
       onUnloaded: async () => await cascadingService.resetAllCascades(),
       onFieldChanged: async (fieldChangedArgs: IWorkItemFieldChangedArgs) => {
         await cascadingService.performCascading(Object.keys(fieldChangedArgs.changedFields)[0]);
+
+        // ---------- NEW LOGIC -----------
+        console.log('Changed Fields:', fieldChangedArgs);
+        console.log('b4');
+        const workItemFormService = await SDK.getService<IWorkItemFormService>(
+          WorkItemTrackingServiceIds.WorkItemFormService
+        );
+        console.log('after');
+        const workItemType = await workItemFormService.getFieldValue('System.WorkItemType', {
+          returnOriginalValue: false,
+        });
+        console.log(workItemType);
+        const reasonField = 'System.Reason';
+
+        // Check if System.WorkItemType is 'Bug' and System.Reason changed
+        if (workItemType === 'Bug' && fieldChangedArgs.changedFields[reasonField]) {
+          const newValue = await workItemFormService.getFieldValue(reasonField, {
+            returnOriginalValue: false,
+          });
+
+          console.log(`Original Reason: ${originalReasonValue}, New Reason: ${newValue}`);
+
+          if (originalReasonValue === 'Fixed' && newValue !== 'Fixed') {
+            console.log(
+              `System.Reason changed from 'Fixed' to '${newValue}'. Calling changedFromFixed.`
+            );
+            changedFromFixed();
+          }
+          originalReasonValue = newValue;
+        }
       },
     };
 
@@ -72,6 +107,11 @@ SDK.init({
     await SDK.notifyLoadSucceeded();
   }
 );
+
+function changedFromFixed() {
+  return console.log('triggered');
+}
+
 /*
 function flipManifestStructure(manifest: Record<string, any>): Record<string, any> {
   const flippedCascades: Record<string, any> = {};
