@@ -70,7 +70,7 @@ class CascadingFieldsService {
     if (typeof cascadeConfiguration === 'undefined') {
       return cascadeMap;
     }
-    console.log('FIRST CASCADE MAP: ' + JSON.stringify(cascadeMap));
+    //console.log('FIRST CASCADE MAP: ' + JSON.stringify(cascadeMap));
 
     Object.entries(cascadeConfiguration).forEach(([fieldName, fieldValues]) => {
       let alters: string[] = [];

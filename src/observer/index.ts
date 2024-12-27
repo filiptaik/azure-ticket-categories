@@ -12,7 +12,7 @@ import {
 import * as SDK from 'azure-devops-extension-sdk';
 import { CascadingFieldsService } from '../common/cascading.service';
 import { ManifestService } from '../common/manifest.service';
-import { addTagsToWorkItems } from '../common/tags.service';
+import { addTagsToWorkItems, getAzureFieldValues } from '../common/tags.service';
 
 SDK.init({
   applyTheme: true,
@@ -66,29 +66,41 @@ SDK.init({
       onFieldChanged: async (fieldChangedArgs: IWorkItemFieldChangedArgs) => {
         await cascadingService.performCascading(Object.keys(fieldChangedArgs.changedFields)[0]);
 
-        console.log('b4');
+        //console.log('b4');
 
         const workItemFormService = await SDK.getService<IWorkItemFormService>(
           WorkItemTrackingServiceIds.WorkItemFormService
         );
         const workItemId = await workItemFormService.getId();
-        console.log('after');
+        // console.log('after');
         const workItemType = await workItemFormService.getFieldValue('System.WorkItemType', {
           returnOriginalValue: false,
         });
-        console.log(workItemType);
+        // console.log(workItemType);
         const reasonField = 'System.Reason';
+        const remainingWorkField = 'Microsoft.VSTS.Scheduling.RemainingWork';
+
+        // --------------------------
 
         if (workItemType === 'Bug' && fieldChangedArgs.changedFields[reasonField]) {
-          const newValue = await workItemFormService.getFieldValue(reasonField, {
-            returnOriginalValue: false,
-          });
+          const newValue = await getAzureFieldValues(reasonField);
 
           if (originalReasonValue === 'Fixed' && newValue !== 'Fixed') {
             console.log(`System.Reason changed from 'Fixed' to '${newValue}'. Adding tag.`);
-            addTagsToWorkItems(workItemId);
+            addTagsToWorkItems(workItemId, 'Not As Designed');
           }
           originalReasonValue = newValue;
+        }
+        // --------------------------
+
+        if (workItemType === 'User Story' && fieldChangedArgs.changedFields[remainingWorkField]) {
+          //console.log('\n', 'remaining work changed', '\n');
+          const newValue = await getAzureFieldValues(remainingWorkField);
+          const oldValue = await getAzureFieldValues(remainingWorkField, false);
+          console.log('OLD: ', oldValue, '\n', 'NEW: ', newValue);
+          if (oldValue < newValue) {
+            addTagsToWorkItems(workItemId, 'Underestimated');
+          }
         }
       },
     };

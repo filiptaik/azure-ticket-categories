@@ -1,6 +1,9 @@
 import * as SDK from 'azure-devops-extension-sdk';
-
-export async function addTagsToWorkItems(workItemId: number): Promise<void> {
+import {
+  IWorkItemFormService,
+  WorkItemTrackingServiceIds,
+} from 'azure-devops-extension-api/WorkItemTracking/WorkItemTrackingServices';
+async function addTagsToWorkItems(workItemId: number, tagToAdd: string): Promise<void> {
   try {
     // Initialize the Azure DevOps SDK
     SDK.init();
@@ -14,10 +17,6 @@ export async function addTagsToWorkItems(workItemId: number): Promise<void> {
 
     const organizationName = hostContext.name;
 
-    // Define the tag to be added
-    const tagToAdd = 'Not As Designed'; // Replace with your desired tag
-
-    // Define the API URL for updating the work item
     const apiUrl = `https://dev.azure.com/${organizationName}/_apis/wit/workitems/${workItemId}?api-version=7.1-preview.3`;
 
     // Fetch an access token for authentication
@@ -76,3 +75,20 @@ export async function addTagsToWorkItems(workItemId: number): Promise<void> {
     console.error('Error adding tag to work item:', error);
   }
 }
+
+async function getAzureFieldValues(field, changedValue = true) {
+  const workItemFormService = await SDK.getService<IWorkItemFormService>(
+    WorkItemTrackingServiceIds.WorkItemFormService
+  );
+  if (changedValue === true) {
+    return await workItemFormService.getFieldValue(field, {
+      returnOriginalValue: false,
+    });
+  } else {
+    return await workItemFormService.getFieldValue(field, {
+      returnOriginalValue: true,
+    });
+  }
+}
+
+export { addTagsToWorkItems, getAzureFieldValues };
