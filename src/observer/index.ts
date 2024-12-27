@@ -12,6 +12,7 @@ import {
 import * as SDK from 'azure-devops-extension-sdk';
 import { CascadingFieldsService } from '../common/cascading.service';
 import { ManifestService } from '../common/manifest.service';
+import { addTagsToWorkItems } from '../common/tags.service';
 
 SDK.init({
   applyTheme: true,
@@ -72,11 +73,13 @@ SDK.init({
         await cascadingService.performCascading(Object.keys(fieldChangedArgs.changedFields)[0]);
 
         // ---------- NEW LOGIC -----------
-        console.log('Changed Fields:', fieldChangedArgs);
+        //console.log('Changed Fields:', fieldChangedArgs);
         console.log('b4');
+
         const workItemFormService = await SDK.getService<IWorkItemFormService>(
           WorkItemTrackingServiceIds.WorkItemFormService
         );
+        const workItemId = await workItemFormService.getId();
         console.log('after');
         const workItemType = await workItemFormService.getFieldValue('System.WorkItemType', {
           returnOriginalValue: false,
@@ -96,7 +99,7 @@ SDK.init({
             console.log(
               `System.Reason changed from 'Fixed' to '${newValue}'. Calling changedFromFixed.`
             );
-            changedFromFixed();
+            addTagsToWorkItems(workItemId);
           }
           originalReasonValue = newValue;
         }
