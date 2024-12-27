@@ -85,6 +85,7 @@ async function getAzureFieldValues(field, changedValue = true) {
       returnOriginalValue: false,
     });
   } else {
+    console.log('false');
     return await workItemFormService.getFieldValue(field, {
       returnOriginalValue: true,
     });

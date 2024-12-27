@@ -8,11 +8,14 @@ import {
   IWorkItemNotificationListener,
   WorkItemTrackingServiceIds,
   IWorkItemLoadedArgs,
+  IWorkItemChangedArgs,
 } from 'azure-devops-extension-api/WorkItemTracking/WorkItemTrackingServices';
 import * as SDK from 'azure-devops-extension-sdk';
 import { CascadingFieldsService } from '../common/cascading.service';
 import { ManifestService } from '../common/manifest.service';
 import { addTagsToWorkItems, getAzureFieldValues } from '../common/tags.service';
+
+let cachedFieldValues: { [key: string]: any } = {};
 
 SDK.init({
   applyTheme: true,
@@ -53,35 +56,48 @@ SDK.init({
           originalReasonValue = await workItemFormService.getFieldValue('System.Reason', {
             returnOriginalValue: false,
           });
-
-          console.log(`Original System.Reason value loaded: ${originalReasonValue}`);
+          const remainingWorkField = 'Microsoft.VSTS.Scheduling.RemainingWork';
+          cachedFieldValues['remainingWork'] = await getAzureFieldValues(remainingWorkField, false);
         } catch (error) {
           console.error('Error applying cascading rules on load:', error);
         }
       },
-      onSaved: async () => await cascadingService.cascadeAll(),
+      onSaved: async (savedEventArgs: IWorkItemChangedArgs) => {
+        await cascadingService.cascadeAll();
+        try {
+          const workItemId = savedEventArgs.id;
+
+          const workItemFormService = await SDK.getService<IWorkItemFormService>(
+            WorkItemTrackingServiceIds.WorkItemFormService
+          );
+
+          const workItemType = await getAzureFieldValues('System.WorkItemType');
+          const remainingWorkField = 'Microsoft.VSTS.Scheduling.RemainingWork';
+          const newRemainingWork = await getAzureFieldValues(remainingWorkField);
+          const oldRemainingWork = cachedFieldValues.remainingWork;
+          if (workItemType === 'User Story' && oldRemainingWork < newRemainingWork) {
+            console.log('New: ', newRemainingWork, 'OLD: ', oldRemainingWork);
+            addTagsToWorkItems(workItemId, 'Underestimated');
+          }
+          cachedFieldValues['remainingWork'] = await getAzureFieldValues(remainingWorkField, false);
+        } catch (error) {
+          console.error('Error in onSaved event:', error);
+        }
+      },
       onRefreshed: async () => await cascadingService.cascadeAll(),
       onReset: async () => await cascadingService.cascadeAll(),
       onUnloaded: async () => await cascadingService.resetAllCascades(),
       onFieldChanged: async (fieldChangedArgs: IWorkItemFieldChangedArgs) => {
         await cascadingService.performCascading(Object.keys(fieldChangedArgs.changedFields)[0]);
 
-        //console.log('b4');
-
         const workItemFormService = await SDK.getService<IWorkItemFormService>(
           WorkItemTrackingServiceIds.WorkItemFormService
         );
         const workItemId = await workItemFormService.getId();
-        // console.log('after');
         const workItemType = await workItemFormService.getFieldValue('System.WorkItemType', {
           returnOriginalValue: false,
         });
-        // console.log(workItemType);
         const reasonField = 'System.Reason';
-        const remainingWorkField = 'Microsoft.VSTS.Scheduling.RemainingWork';
-
-        // --------------------------
-
         if (workItemType === 'Bug' && fieldChangedArgs.changedFields[reasonField]) {
           const newValue = await getAzureFieldValues(reasonField);
 
@@ -90,17 +106,6 @@ SDK.init({
             addTagsToWorkItems(workItemId, 'Not As Designed');
           }
           originalReasonValue = newValue;
-        }
-        // --------------------------
-
-        if (workItemType === 'User Story' && fieldChangedArgs.changedFields[remainingWorkField]) {
-          //console.log('\n', 'remaining work changed', '\n');
-          const newValue = await getAzureFieldValues(remainingWorkField);
-          const oldValue = await getAzureFieldValues(remainingWorkField, false);
-          console.log('OLD: ', oldValue, '\n', 'NEW: ', newValue);
-          if (oldValue < newValue) {
-            addTagsToWorkItems(workItemId, 'Underestimated');
-          }
         }
       },
     };
