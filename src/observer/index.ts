@@ -76,7 +76,6 @@ SDK.init({
           const newRemainingWork = await getAzureFieldValues(remainingWorkField);
           const oldRemainingWork = cachedFieldValues.remainingWork;
           if (workItemType === 'User Story' && oldRemainingWork < newRemainingWork) {
-            console.log('New: ', newRemainingWork, 'OLD: ', oldRemainingWork);
             addTagsToWorkItems(workItemId, 'Underestimated');
           }
           cachedFieldValues['remainingWork'] = await getAzureFieldValues(remainingWorkField, false);
