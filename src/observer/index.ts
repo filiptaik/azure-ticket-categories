@@ -52,12 +52,14 @@ SDK.init({
             return;
           }
           await cascadingService.getconfigFieldValues();
-
-          hasBeenResolvedAlready = hasResolvedByBeenSet(
+          console.log('PROJJJJ: ', project);
+          hasBeenResolvedAlready = await hasResolvedByBeenSet(
             SDK.getHost().name,
-            project,
+            project.name,
             workItemLoadedArgs.id
           );
+
+          console.log(hasBeenResolvedAlready);
 
           const workItemFormService = await SDK.getService<IWorkItemFormService>(
             WorkItemTrackingServiceIds.WorkItemFormService

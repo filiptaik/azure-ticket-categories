@@ -7,29 +7,36 @@ import {
 import axios from 'axios';
 
 async function hasResolvedByBeenSet(organization, project, workItemId) {
-  const apiUrl = `https://dev.azure.com/${organization}/${project}/_apis/wit/workitems/${workItemId}/updates?api-version=7.2-preview.3`;
+  const apiUrl = `https://dev.azure.com/${organization}/${project}/_apis/wit/workitems/${workItemId}/revisions?api-version=7.1`;
 
   const auth = await SDK.getAccessToken();
 
   try {
-    // Fetch the history updates of the work item
+    // Fetch the full revisions of the work item
     const response = await axios.get(apiUrl, {
       headers: {
-        Authorization: `Basic ${auth}`,
+        Authorization: `Bearer ${auth}`,
+        'Content-Type': 'application/json',
       },
     });
 
-    const updates = response.data.value;
+    const revisions = response.data.value;
 
-    // Check each update for System.ResolvedBy changes
-    return updates.some(
-      update =>
-        update.fields &&
-        update.fields['System.ResolvedBy'] &&
-        update.fields['System.ResolvedBy'].newValue
-    );
+    // Iterate through the revisions to check for ResolvedBy
+    for (const revision of revisions) {
+      const state = revision.fields['System.State'];
+      const resolvedBy = revision.fields['Microsoft.VSTS.Common.ResolvedBy'];
+
+      // Check if state is 'Resolved' and ResolvedBy is set
+      if (state === 'Resolved' && resolvedBy) {
+        return true; // Found a resolved state with ResolvedBy set
+      }
+    }
+
+    // If no revision satisfies the condition
+    return false;
   } catch (error) {
-    console.error('Error checking work item updates:', error.message);
+    console.error('Error fetching work item revisions:', error.message);
     throw error;
   }
 }
