@@ -13,7 +13,11 @@ import {
 import * as SDK from 'azure-devops-extension-sdk';
 import { CascadingFieldsService } from '../common/cascading.service';
 import { ManifestService } from '../common/manifest.service';
-import { addTagsToWorkItems, getAzureFieldValues } from '../common/tags.service';
+import {
+  addTagsToWorkItems,
+  getAzureFieldValues,
+  hasResolvedByBeenSet,
+} from '../common/tags.service';
 
 let cachedFieldValues: { [key: string]: any } = {};
 
@@ -37,6 +41,7 @@ SDK.init({
       manifest = Object.assign({}, ManifestService.defaultManifest);
     }
     let originalReasonValue;
+    let hasBeenResolvedAlready;
     const cascadingService = new CascadingFieldsService(workItemFormService, manifest.cascades);
     const provider: IWorkItemNotificationListener = {
       onLoaded: async (workItemLoadedArgs: IWorkItemLoadedArgs) => {
@@ -47,6 +52,12 @@ SDK.init({
             return;
           }
           await cascadingService.getconfigFieldValues();
+
+          hasBeenResolvedAlready = hasResolvedByBeenSet(
+            SDK.getHost().name,
+            project,
+            workItemLoadedArgs.id
+          );
 
           const workItemFormService = await SDK.getService<IWorkItemFormService>(
             WorkItemTrackingServiceIds.WorkItemFormService
@@ -70,12 +81,15 @@ SDK.init({
           const workItemFormService = await SDK.getService<IWorkItemFormService>(
             WorkItemTrackingServiceIds.WorkItemFormService
           );
-
           const workItemType = await getAzureFieldValues('System.WorkItemType');
           const remainingWorkField = 'Microsoft.VSTS.Scheduling.RemainingWork';
           const newRemainingWork = await getAzureFieldValues(remainingWorkField);
           const oldRemainingWork = cachedFieldValues.remainingWork;
-          if (workItemType === 'User Story' && oldRemainingWork < newRemainingWork) {
+          if (
+            workItemType === 'User Story' &&
+            oldRemainingWork < newRemainingWork &&
+            (await workItemFormService.isNew()) === false
+          ) {
             addTagsToWorkItems(workItemId, 'Underestimated');
           }
           cachedFieldValues['remainingWork'] = await getAzureFieldValues(remainingWorkField, false);
@@ -89,6 +103,7 @@ SDK.init({
       onFieldChanged: async (fieldChangedArgs: IWorkItemFieldChangedArgs) => {
         await cascadingService.performCascading(Object.keys(fieldChangedArgs.changedFields)[0]);
 
+        console.log(fieldChangedArgs.changedFields);
         const workItemFormService = await SDK.getService<IWorkItemFormService>(
           WorkItemTrackingServiceIds.WorkItemFormService
         );
@@ -96,6 +111,7 @@ SDK.init({
         const workItemType = await workItemFormService.getFieldValue('System.WorkItemType', {
           returnOriginalValue: false,
         });
+
         const reasonField = 'System.Reason';
         if (workItemType === 'Bug' && fieldChangedArgs.changedFields[reasonField]) {
           const newValue = await getAzureFieldValues(reasonField);
