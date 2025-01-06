@@ -23,7 +23,6 @@ class CascadingFieldsService {
   ) {
     this.workItemService = workItemService;
     this.cascadeMap = this.createCascadingMap(cascadeConfiguration);
-    //console.log(JSON.stringify('cascade config OG ' + JSON.stringify(cascadeConfiguration)));
     this.fetchAndLogInitialValues();
   }
   private async fetchAndLogInitialValues(): Promise<void> {
@@ -34,7 +33,6 @@ class CascadingFieldsService {
     });
 
     if (testCustomerValue !== undefined && testCustomerValue !== null) {
-      console.log(`Initial value of ${testCustomerField}: ${testCustomerValue}`);
       // Trigger cascading logic based on the initial value of Custom.TestCustomer
       await this.updateImplementationTeam(testCustomerValue as string);
     } else {
@@ -122,7 +120,6 @@ class CascadingFieldsService {
     const changedFieldValue = (await this.workItemService.getFieldValue(changedFieldReferenceName, {
       returnOriginalValue: false,
     })) as string;
-    //console.log('CHANGED STRING VALUE: ' + changedFieldValue);
     // Ensure the changed field is the dependent field
     if (
       !Object.values(this.cascadeMap).some(cascade => {
@@ -131,7 +128,6 @@ class CascadingFieldsService {
         });
       })
     ) {
-      //console.log(`No cascading configuration for field: ${changedFieldReferenceName}`);
       return;
     }
 
@@ -142,8 +138,6 @@ class CascadingFieldsService {
         return allowedValues?.includes(changedFieldValue);
       });
     });
-
-    //console.log('Affected parent fields:', affectedParentFields);
 
     // Prepare allowed values for the parent fields
     const fieldValuesToFilter: FieldOptions = {};
@@ -158,8 +152,6 @@ class CascadingFieldsService {
 
       fieldValuesToFilter[parentField] = matchingParentValues;
     }
-
-    //console.log('Field values to filter:', fieldValuesToFilter);
 
     // Apply filtering and auto-select the first allowed value
     return Promise.all(
@@ -205,9 +197,7 @@ class CascadingFieldsService {
     );
     if (typeof testCustomer === 'string' && typeof testImplementationTeam === 'undefined') {
       this.performCascading(JSON.stringify(testCustomer));
-      console.log('aeg muutusteks 5');
     } else {
-      console.log('kõik timmis');
       return;
     }
   }

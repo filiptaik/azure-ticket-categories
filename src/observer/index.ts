@@ -47,21 +47,17 @@ SDK.init({
     const cascadingService = new CascadingFieldsService(workItemFormService, manifest.cascades);
     const provider: IWorkItemNotificationListener = {
       onLoaded: async (workItemLoadedArgs: IWorkItemLoadedArgs) => {
-        //console.log('Work item data' + workItemFormService.getFieldValues);
         try {
           if (!manifest || !manifest.cascades) {
             console.warn('Manifest is missing or does not contain cascades');
             return;
           }
           await cascadingService.getconfigFieldValues();
-          console.log('PROJJJJ: ', project);
           hasBeenResolvedAlready = await hasResolvedByBeenSet(
             SDK.getHost().name,
             project.name,
             workItemLoadedArgs.id
           );
-
-          console.log(hasBeenResolvedAlready);
 
           const workItemFormService = await SDK.getService<IWorkItemFormService>(
             WorkItemTrackingServiceIds.WorkItemFormService
@@ -104,7 +100,6 @@ SDK.init({
             (await checkFieldHasValue(workItemId, 'Custom.ResponsibleDeveloper')) === false
           ) {
             updateFieldValue(workItemId, 'Custom.ResponsibleDeveloper', SDK.getUser().name);
-            console.log("ayo")
             hasBeenResolvedAlready = false;
           }
         } catch (error) {
@@ -117,7 +112,6 @@ SDK.init({
       onFieldChanged: async (fieldChangedArgs: IWorkItemFieldChangedArgs) => {
         await cascadingService.performCascading(Object.keys(fieldChangedArgs.changedFields)[0]);
 
-        console.log(fieldChangedArgs.changedFields);
         console.log(SDK.getUser());
         const workItemFormService = await SDK.getService<IWorkItemFormService>(
           WorkItemTrackingServiceIds.WorkItemFormService

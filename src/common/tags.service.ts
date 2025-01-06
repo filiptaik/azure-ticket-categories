@@ -93,10 +93,7 @@ async function addTagsToWorkItems(workItemId: number, tagToAdd: string): Promise
     }
 
     const organizationName = hostContext.name;
-    console.log(organizationName);
     const accessToken = await SDK.getAccessToken();
-    console.log(accessToken);
-    console.log(workItemId);
     const workItemUpdates = await fetch(
       `https://dev.azure.com/${organizationName}/_apis/wit/workItems/${workItemId}/updates?api-version=7.1`,
       {
@@ -107,7 +104,6 @@ async function addTagsToWorkItems(workItemId: number, tagToAdd: string): Promise
         },
       }
     );
-    console.log('updated: ', typeof workItemUpdates);
     const apiUrl = `https://dev.azure.com/${organizationName}/_apis/wit/workitems/${workItemId}?api-version=7.1-preview.3`;
 
     // Fetch existing work item tags
@@ -118,8 +114,6 @@ async function addTagsToWorkItems(workItemId: number, tagToAdd: string): Promise
         'Content-Type': 'application/json',
       },
     });
-
-    console.log('response: ', workItemResponse);
 
     if (!workItemResponse.ok) {
       throw new Error(`Failed to fetch work item: ${workItemResponse.statusText}`);
