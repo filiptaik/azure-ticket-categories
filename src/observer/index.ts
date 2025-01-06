@@ -17,6 +17,7 @@ import {
   addTagsToWorkItems,
   getAzureFieldValues,
   hasResolvedByBeenSet,
+  checkFieldHasValue,
 } from '../common/tags.service';
 
 let cachedFieldValues: { [key: string]: any } = {};
@@ -41,7 +42,7 @@ SDK.init({
       manifest = Object.assign({}, ManifestService.defaultManifest);
     }
     let originalReasonValue;
-    let hasBeenResolvedAlready;
+    let hasBeenResolvedAlready = false;
     const cascadingService = new CascadingFieldsService(workItemFormService, manifest.cascades);
     const provider: IWorkItemNotificationListener = {
       onLoaded: async (workItemLoadedArgs: IWorkItemLoadedArgs) => {
@@ -95,6 +96,16 @@ SDK.init({
             addTagsToWorkItems(workItemId, 'Underestimated');
           }
           cachedFieldValues['remainingWork'] = await getAzureFieldValues(remainingWorkField, false);
+
+          if (
+            !hasBeenResolvedAlready &&
+            (await hasResolvedByBeenSet(SDK.getHost().name, project.name, workItemId)) &&
+            (await checkFieldHasValue(workItemId, 'Custom.ResponsibleDeveloper')) === false
+          ) {
+            console.log('ayoo');
+
+            hasBeenResolvedAlready = false;
+          }
         } catch (error) {
           console.error('Error in onSaved event:', error);
         }

@@ -249,4 +249,10 @@ async function updateFieldValue(workItemId: number, fieldId: string, newValue) {
   }
 }
 
-export { addTagsToWorkItems, getAzureFieldValues, updateFieldValue, hasResolvedByBeenSet };
+export {
+  addTagsToWorkItems,
+  getAzureFieldValues,
+  updateFieldValue,
+  hasResolvedByBeenSet,
+  checkFieldHasValue,
+};
