@@ -18,6 +18,7 @@ import {
   getAzureFieldValues,
   hasResolvedByBeenSet,
   checkFieldHasValue,
+  updateFieldValue,
 } from '../common/tags.service';
 
 let cachedFieldValues: { [key: string]: any } = {};
@@ -102,8 +103,8 @@ SDK.init({
             (await hasResolvedByBeenSet(SDK.getHost().name, project.name, workItemId)) &&
             (await checkFieldHasValue(workItemId, 'Custom.ResponsibleDeveloper')) === false
           ) {
-            console.log('ayoo');
-
+            updateFieldValue(workItemId, 'Custom.ResponsibleDeveloper', SDK.getUser().name);
+            console.log("ayo")
             hasBeenResolvedAlready = false;
           }
         } catch (error) {
@@ -117,6 +118,7 @@ SDK.init({
         await cascadingService.performCascading(Object.keys(fieldChangedArgs.changedFields)[0]);
 
         console.log(fieldChangedArgs.changedFields);
+        console.log(SDK.getUser());
         const workItemFormService = await SDK.getService<IWorkItemFormService>(
           WorkItemTrackingServiceIds.WorkItemFormService
         );
