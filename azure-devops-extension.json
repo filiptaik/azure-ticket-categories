@@ -2,7 +2,7 @@
   "manifestVersion": 1.0,
   "id": "cascading-picklists-extension",
   "publisher": "FTShepherdCMMS",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "name": "Grouped Picklist Values",
   "description": "Extension allows to filter, and autoselect picklist values based on a different lists value",
   "categories": [

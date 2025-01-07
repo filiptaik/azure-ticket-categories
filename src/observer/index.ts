@@ -85,23 +85,15 @@ SDK.init({
           const newRemainingWork = await getAzureFieldValues(remainingWorkField);
           const oldRemainingWork = cachedFieldValues.remainingWork;
           const onSavedReasonValue = await getAzureFieldValues('System.Reason');
-
-          if (
-            workItemType === 'Bug' &&
-            originalReasonValue === 'Fixed' &&
-            onSavedReasonValue !== 'Fixed'
-          ) {
+          //prettier-ignore
+          if (workItemType === 'Bug' && originalReasonValue === 'Fixed' && onSavedReasonValue !== 'Fixed') {
             console.log(
               `System.Reason changed from 'Fixed' to '${onSavedReasonValue}'. Adding tag. Original reason value: '${originalReasonValue}'`
             );
             addTagsToWorkItems(workItemId, 'Not As Designed');
           }
 
-          if (
-            workItemType === 'User Story' &&
-            oldRemainingWork < newRemainingWork &&
-            (await workItemFormService.isNew()) === false
-          ) {
+          if (workItemType === 'User Story' && oldRemainingWork < newRemainingWork && (await workItemFormService.isNew()) === false) {
             addTagsToWorkItems(workItemId, 'Underestimated');
           }
           cachedFieldValues['remainingWork'] = await getAzureFieldValues(remainingWorkField, false);
