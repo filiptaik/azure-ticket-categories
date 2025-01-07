@@ -1,6 +1,6 @@
 {
   "name": "cascading-picklists-extenstion",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Filip Taik",
   "license": "",
   "description": "Extenstion that allows to customize cascading picklists for Azure DevOps.",

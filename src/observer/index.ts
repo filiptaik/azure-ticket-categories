@@ -48,8 +48,8 @@ SDK.init({
     const provider: IWorkItemNotificationListener = {
       onLoaded: async (workItemLoadedArgs: IWorkItemLoadedArgs) => {
         try {
-          if (!manifest || !manifest.cascades) {
-            console.warn('Manifest is missing or does not contain cascades');
+          if (!manifest || !manifest.cascades || workItemLoadedArgs.isNew) {
+            console.warn('Manifest is missing, does not contain cascades or it is a new work item');
             return;
           }
           await cascadingService.getconfigFieldValues();
@@ -58,7 +58,6 @@ SDK.init({
             project.name,
             workItemLoadedArgs.id
           );
-
           const workItemFormService = await SDK.getService<IWorkItemFormService>(
             WorkItemTrackingServiceIds.WorkItemFormService
           );
@@ -85,6 +84,19 @@ SDK.init({
           const remainingWorkField = 'Microsoft.VSTS.Scheduling.RemainingWork';
           const newRemainingWork = await getAzureFieldValues(remainingWorkField);
           const oldRemainingWork = cachedFieldValues.remainingWork;
+          const onSavedReasonValue = await getAzureFieldValues('System.Reason');
+
+          if (
+            workItemType === 'Bug' &&
+            originalReasonValue === 'Fixed' &&
+            onSavedReasonValue !== 'Fixed'
+          ) {
+            console.log(
+              `System.Reason changed from 'Fixed' to '${onSavedReasonValue}'. Adding tag. Original reason value: '${originalReasonValue}'`
+            );
+            addTagsToWorkItems(workItemId, 'Not As Designed');
+          }
+
           if (
             workItemType === 'User Story' &&
             oldRemainingWork < newRemainingWork &&
@@ -102,6 +114,8 @@ SDK.init({
             updateFieldValue(workItemId, 'Custom.ResponsibleDeveloper', SDK.getUser().name);
             hasBeenResolvedAlready = false;
           }
+
+          originalReasonValue = onSavedReasonValue;
         } catch (error) {
           console.error('Error in onSaved event:', error);
         }
@@ -111,26 +125,9 @@ SDK.init({
       onUnloaded: async () => await cascadingService.resetAllCascades(),
       onFieldChanged: async (fieldChangedArgs: IWorkItemFieldChangedArgs) => {
         await cascadingService.performCascading(Object.keys(fieldChangedArgs.changedFields)[0]);
-
-        console.log(SDK.getUser());
         const workItemFormService = await SDK.getService<IWorkItemFormService>(
           WorkItemTrackingServiceIds.WorkItemFormService
         );
-        const workItemId = await workItemFormService.getId();
-        const workItemType = await workItemFormService.getFieldValue('System.WorkItemType', {
-          returnOriginalValue: false,
-        });
-
-        const reasonField = 'System.Reason';
-        if (workItemType === 'Bug' && fieldChangedArgs.changedFields[reasonField]) {
-          const newValue = await getAzureFieldValues(reasonField);
-
-          if (originalReasonValue === 'Fixed' && newValue !== 'Fixed') {
-            console.log(`System.Reason changed from 'Fixed' to '${newValue}'. Adding tag.`);
-            addTagsToWorkItems(workItemId, 'Not As Designed');
-          }
-          originalReasonValue = newValue;
-        }
       },
     };
 
