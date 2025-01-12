@@ -62,8 +62,8 @@ SDK.init({
             WorkItemTrackingServiceIds.WorkItemFormService
           );
 
-          // Fetch and store the initial value of System.Reason
-          originalReasonValue = await workItemFormService.getFieldValue('System.Reason', {
+          // Fetch and store the initial value of Microsoft.VSTS.Common.ResolvedReason
+          originalReasonValue = await workItemFormService.getFieldValue('Microsoft.VSTS.Common.ResolvedReason', {
             returnOriginalValue: false,
           });
           const remainingWorkField = 'Microsoft.VSTS.Scheduling.RemainingWork';
@@ -84,11 +84,11 @@ SDK.init({
           const remainingWorkField = 'Microsoft.VSTS.Scheduling.RemainingWork';
           const newRemainingWork = await getAzureFieldValues(remainingWorkField);
           const oldRemainingWork = cachedFieldValues.remainingWork;
-          const onSavedReasonValue = await getAzureFieldValues('System.Reason');
+          const onSavedReasonValue = await getAzureFieldValues('Microsoft.VSTS.Common.ResolvedReason');
           //prettier-ignore
-          if (workItemType === 'Bug' && originalReasonValue === 'Fixed' && onSavedReasonValue !== 'Fixed') {
+          if (workItemType === 'Bug' && originalReasonValue === 'As Designed' && onSavedReasonValue !== 'As Designed') {
             console.log(
-              `System.Reason changed from 'Fixed' to '${onSavedReasonValue}'. Adding tag. Original reason value: '${originalReasonValue}'`
+              `Microsoft.VSTS.Common.ResolvedReason changed from 'As Designed' to '${onSavedReasonValue}'. Adding tag. Original reason value: '${originalReasonValue}'`
             );
             addTagsToWorkItems(workItemId, 'Not As Designed');
           }
@@ -98,11 +98,7 @@ SDK.init({
           }
           cachedFieldValues['remainingWork'] = await getAzureFieldValues(remainingWorkField, false);
 
-          if (
-            !hasBeenResolvedAlready &&
-            (await hasResolvedByBeenSet(SDK.getHost().name, project.name, workItemId)) &&
-            (await checkFieldHasValue(workItemId, 'Custom.ResponsibleDeveloper')) === false
-          ) {
+          if (hasBeenResolvedAlready && (await hasResolvedByBeenSet(SDK.getHost().name, project.name, workItemId)) && (await checkFieldHasValue(workItemId, 'Custom.ResponsibleDeveloper')) === false) {
             updateFieldValue(workItemId, 'Custom.ResponsibleDeveloper', SDK.getUser().name);
             hasBeenResolvedAlready = false;
           }
@@ -117,9 +113,6 @@ SDK.init({
       onUnloaded: async () => await cascadingService.resetAllCascades(),
       onFieldChanged: async (fieldChangedArgs: IWorkItemFieldChangedArgs) => {
         await cascadingService.performCascading(Object.keys(fieldChangedArgs.changedFields)[0]);
-        const workItemFormService = await SDK.getService<IWorkItemFormService>(
-          WorkItemTrackingServiceIds.WorkItemFormService
-        );
       },
     };
 
