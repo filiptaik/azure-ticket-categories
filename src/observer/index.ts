@@ -19,9 +19,9 @@ import {
   hasResolvedByBeenSet,
   checkFieldHasValue,
   updateFieldValue,
+  getWorkItemUpdates
 } from '../common/tags.service';
 
-let cachedFieldValues: { [key: string]: any } = {};
 
 SDK.init({
   applyTheme: true,
@@ -36,6 +36,7 @@ SDK.init({
       CommonServiceIds.ProjectPageService
     );
     const project = await projectInfoService.getProject();
+    const organization = SDK.getHost().name
     const manifestService = new ManifestService(project.id);
     let manifest = await manifestService.getManifest();
 
@@ -54,7 +55,7 @@ SDK.init({
           }
           await cascadingService.getconfigFieldValues();
           hasBeenResolvedAlready = await hasResolvedByBeenSet(
-            SDK.getHost().name,
+            organization,
             project.name,
             workItemLoadedArgs.id
           );
@@ -66,8 +67,7 @@ SDK.init({
           originalReasonValue = await workItemFormService.getFieldValue('Microsoft.VSTS.Common.ResolvedReason', {
             returnOriginalValue: false,
           });
-          const remainingWorkField = 'Microsoft.VSTS.Scheduling.RemainingWork';
-          cachedFieldValues['remainingWork'] = await getAzureFieldValues(remainingWorkField, false);
+
         } catch (error) {
           console.error('Error applying cascading rules on load:', error);
         }
@@ -75,35 +75,31 @@ SDK.init({
       onSaved: async (savedEventArgs: IWorkItemChangedArgs) => {
         await cascadingService.cascadeAll();
         try {
+
           const workItemId = savedEventArgs.id;
+
+          getWorkItemUpdates(organization, project.name, workItemId)
 
           const workItemFormService = await SDK.getService<IWorkItemFormService>(
             WorkItemTrackingServiceIds.WorkItemFormService
           );
           const workItemType = await getAzureFieldValues('System.WorkItemType');
-          const remainingWorkField = 'Microsoft.VSTS.Scheduling.RemainingWork';
-          const newRemainingWork = await getAzureFieldValues(remainingWorkField);
-          const oldRemainingWork = cachedFieldValues.remainingWork;
           const onSavedReasonValue = await getAzureFieldValues('Microsoft.VSTS.Common.ResolvedReason');
           //prettier-ignore
+          /*
           if (workItemType === 'Bug' && originalReasonValue === 'As Designed' && onSavedReasonValue !== 'As Designed') {
             console.log(
               `Microsoft.VSTS.Common.ResolvedReason changed from 'As Designed' to '${onSavedReasonValue}'. Adding tag. Original reason value: '${originalReasonValue}'`
             );
             addTagsToWorkItems(workItemId, 'Not As Designed');
           }
-
-          if (workItemType === 'User Story' && oldRemainingWork < newRemainingWork && (await workItemFormService.isNew()) === false) {
-            addTagsToWorkItems(workItemId, 'Underestimated');
-          }
-          cachedFieldValues['remainingWork'] = await getAzureFieldValues(remainingWorkField, false);
+            */
 
           if (hasBeenResolvedAlready && (await hasResolvedByBeenSet(SDK.getHost().name, project.name, workItemId)) && (await checkFieldHasValue(workItemId, 'Custom.ResponsibleDeveloper')) === false) {
             updateFieldValue(workItemId, 'Custom.ResponsibleDeveloper', SDK.getUser().name);
             hasBeenResolvedAlready = false;
           }
 
-          originalReasonValue = onSavedReasonValue;
         } catch (error) {
           console.error('Error in onSaved event:', error);
         }

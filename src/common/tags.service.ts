@@ -6,6 +6,163 @@ import {
 
 import axios from 'axios';
 
+async function apiService(apiUrl) {
+  const auth = await SDK.getAccessToken();
+
+  const response = await axios.get(apiUrl, {
+    headers: {
+      Authorization: `Bearer ${auth}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  return response
+}
+
+async function getWorkItemUpdates(organization, project, workItemId) {
+  const apiUrl = `https://dev.azure.com/${organization}/${project}/_apis/wit/workitems/${workItemId}/updates?api-version=7.1`;
+
+  const remainingWorkField = "Microsoft.VSTS.Scheduling.RemainingWork"
+  const closedByField = "Microsoft.VSTS.Common.ClosedBy"
+  const resolvedReasonField = "Microsoft.VSTS.Common.ResolvedReason"
+  const systemReasonField = "System.Reason"
+  const stateField = "System.State"
+
+  const auth = await SDK.getAccessToken();
+  try {
+    // Fetch the full revisions of the work item
+    const response = await axios.get(apiUrl, {
+      headers: {
+        Authorization: `Bearer ${auth}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const fieldsChangedOnSave = response.data.value[response.data.value.length - 1].fields
+    console.log("Changed fields", fieldsChangedOnSave)
+
+
+    if (fieldsChangedOnSave.hasOwnProperty(closedByField)) {
+      if (fieldsChangedOnSave[closedByField].hasOwnProperty("newValue") && isUserInQA(fieldsChangedOnSave[closedByField].newValue.displayName)) {
+        console.log("Ticket closed by", fieldsChangedOnSave[closedByField].newValue.displayName)
+        updateFieldValue(workItemId, "Custom.TestedBy", fieldsChangedOnSave[closedByField].newValue.displayName)
+      }
+    }
+
+    if (fieldsChangedOnSave.hasOwnProperty(remainingWorkField)) {
+      console.log("NEW VALUE: ", fieldsChangedOnSave[remainingWorkField].newValue, " OLD VALUE: ", fieldsChangedOnSave[remainingWorkField].oldValue)
+      if (fieldsChangedOnSave[remainingWorkField].newValue > fieldsChangedOnSave[remainingWorkField].oldValue) {
+        addTagsToWorkItems(workItemId, 'Underestimated');
+      }
+    }
+
+    if (fieldsChangedOnSave.hasOwnProperty(resolvedReasonField) || fieldsChangedOnSave.hasOwnProperty(systemReasonField)) {
+      const resolvedField = fieldsChangedOnSave[resolvedReasonField];
+      const systemField = fieldsChangedOnSave[systemReasonField];
+
+      if (
+        resolvedField?.hasOwnProperty("oldValue") &&
+        (
+          (resolvedField.oldValue === 'As Designed' && resolvedField.newValue !== 'As Designed') ||
+          (systemField?.oldValue === 'As Designed' && systemField?.newValue !== 'As Designed')
+        )
+      ) {
+        addTagsToWorkItems(workItemId, 'Not As Designed');
+      }
+    }
+
+    if (fieldsChangedOnSave.hasOwnProperty(stateField)) {
+      if (fieldsChangedOnSave[stateField].newValue === "Re-opened") {
+        incrementIntegerField(workItemId, "Custom.TimesinReopened")
+      }
+    }
+
+  } catch (error) {
+    console.error('Error fetching work item revisions:', error.message);
+    throw error;
+  }
+}
+
+
+async function incrementIntegerField(workItemId: number, fieldId: string) {
+  try {
+    // Initialize the Azure DevOps SDK
+    SDK.init();
+
+    // Get the host context and access token
+    const hostContext = SDK.getHost();
+    if (!hostContext || !hostContext.name) {
+      throw new Error('Failed to retrieve host context or organization name.');
+    }
+
+    const organizationName = hostContext.name;
+    const accessToken = await SDK.getAccessToken();
+
+    const apiUrl = `https://dev.azure.com/${organizationName}/_apis/wit/workitems/${workItemId}?api-version=7.1-preview.3`;
+
+    // Fetch the current work item data
+    const workItemResponse = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!workItemResponse.ok) {
+      throw new Error(`Failed to fetch work item: ${workItemResponse.statusText}`);
+    }
+
+    const workItem = await workItemResponse.json();
+    const currentValue = workItem.fields[fieldId] || 0; // Default to 0 if the field is empty
+
+    // Increment the value
+    const newValue = currentValue + 1;
+
+    // Update the field with the incremented value
+    const updateResponse = await fetch(apiUrl, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json-patch+json',
+      },
+      body: JSON.stringify([
+        {
+          op: 'add',
+          path: `/fields/${fieldId}`,
+          value: newValue,
+        },
+      ]),
+    });
+
+    if (!updateResponse.ok) {
+      throw new Error(`Failed to update work item: ${updateResponse.statusText}`);
+    }
+
+    console.log(`Field ${fieldId} incremented to ${newValue}`);
+    return true;
+  } catch (error) {
+    console.error('Error incrementing field:', error);
+    return false;
+  }
+}
+
+
+async function isUserInQA(userName) {
+  const qaTeamId = "7dd8d65b-03bb-48ed-86a4-34dc27c9971a";
+  const apiUrl = `https://dev.azure.com/shepherdcmms/_apis/projects/Shepherd%20CMMS/teams/${qaTeamId}/members?api-version=7.1`;
+
+  try {
+    const response = await apiService(apiUrl);
+    const qaMembers = response.data.value;
+
+    return qaMembers.some(member => userName === member.identity.displayName);
+  } catch (error) {
+    console.error("Error fetching QA members:", error);
+    return false;
+  }
+}
+
 async function hasResolvedByBeenSet(organization, project, workItemId) {
   const apiUrl = `https://dev.azure.com/${organization}/${project}/_apis/wit/workitems/${workItemId}/revisions?api-version=7.1`;
 
@@ -40,6 +197,9 @@ async function hasResolvedByBeenSet(organization, project, workItemId) {
     throw error;
   }
 }
+
+
+
 
 async function checkFieldHasValue(workItemId: number, fieldId: string) {
   try {
@@ -249,4 +409,5 @@ export {
   updateFieldValue,
   hasResolvedByBeenSet,
   checkFieldHasValue,
+  getWorkItemUpdates
 };

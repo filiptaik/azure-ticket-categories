@@ -3,7 +3,7 @@
   "version": "1.0.1",
   "author": "Filip Taik",
   "license": "",
-  "description": "Extenstion that allows to customize cascading picklists for Azure DevOps.",
+  "description": "Extension that allows to customize cascading picklists for Azure DevOps.",
   "private": true,
   "scripts": {
     "start": "webpack-dev-server --hot --progress --static ./ --port 44300 --https  --config webpack.dev.config.js",
