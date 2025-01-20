@@ -27,6 +27,7 @@ async function getWorkItemUpdates(organization, project, workItemId) {
   const resolvedReasonField = "Microsoft.VSTS.Common.ResolvedReason"
   const systemReasonField = "System.Reason"
   const stateField = "System.State"
+  const responsibleDevField = "Custom.ResponsibleDeveloper"
 
   const auth = await SDK.getAccessToken();
   try {
@@ -71,12 +72,29 @@ async function getWorkItemUpdates(organization, project, workItemId) {
       }
     }
 
+    /* 
+    --------------------------------------------------------------------------------------
+
+     new logic to set the resolved by field. checks on any save where state changed to Resolved whether this is the first time it has been done. If yes, set the user that resolved, if no, set the OG resolver */
     if (fieldsChangedOnSave.hasOwnProperty(stateField)) {
       if (fieldsChangedOnSave[stateField].newValue === "Re-opened") {
         incrementIntegerField(workItemId, "Custom.TimesinReopened")
       }
-    }
 
+      if (fieldsChangedOnSave[stateField].newValue === "Resolved" && !(await checkFieldHasValue(workItemId, responsibleDevField))) {
+        let isFirstTimeResolved = await hasResolvedByBeenSet(organization, project, workItemId)
+        if (isFirstTimeResolved !== false) {
+          console.log("prev resolver", isFirstTimeResolved.displayName)
+          updateFieldValue(workItemId, responsibleDevField, isFirstTimeResolved.displayName)
+          // set the field value to user that originally set to resolved
+        } else {
+          // set field value to user that set to resolved 
+          console.log("never been resolved")
+          updateFieldValue(workItemId, responsibleDevField, SDK.getUser().displayName)
+        }
+      }
+    }
+    // -------------------------------------------------------------------------------------
   } catch (error) {
     console.error('Error fetching work item revisions:', error.message);
     throw error;
@@ -186,7 +204,7 @@ async function hasResolvedByBeenSet(organization, project, workItemId) {
 
       // Check if state is 'Resolved' and ResolvedBy is set
       if (state === 'Resolved' && resolvedBy) {
-        return true; // Found a resolved state with ResolvedBy set
+        return resolvedBy; // Found a resolved state with ResolvedBy set
       }
     }
 

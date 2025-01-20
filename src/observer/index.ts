@@ -14,11 +14,7 @@ import * as SDK from 'azure-devops-extension-sdk';
 import { CascadingFieldsService } from '../common/cascading.service';
 import { ManifestService } from '../common/manifest.service';
 import {
-  addTagsToWorkItems,
-  getAzureFieldValues,
   hasResolvedByBeenSet,
-  checkFieldHasValue,
-  updateFieldValue,
   getWorkItemUpdates
 } from '../common/tags.service';
 
@@ -59,14 +55,6 @@ SDK.init({
             project.name,
             workItemLoadedArgs.id
           );
-          const workItemFormService = await SDK.getService<IWorkItemFormService>(
-            WorkItemTrackingServiceIds.WorkItemFormService
-          );
-
-          // Fetch and store the initial value of Microsoft.VSTS.Common.ResolvedReason
-          originalReasonValue = await workItemFormService.getFieldValue('Microsoft.VSTS.Common.ResolvedReason', {
-            returnOriginalValue: false,
-          });
 
         } catch (error) {
           console.error('Error applying cascading rules on load:', error);
@@ -79,26 +67,6 @@ SDK.init({
           const workItemId = savedEventArgs.id;
 
           getWorkItemUpdates(organization, project.name, workItemId)
-
-          const workItemFormService = await SDK.getService<IWorkItemFormService>(
-            WorkItemTrackingServiceIds.WorkItemFormService
-          );
-          const workItemType = await getAzureFieldValues('System.WorkItemType');
-          const onSavedReasonValue = await getAzureFieldValues('Microsoft.VSTS.Common.ResolvedReason');
-          //prettier-ignore
-          /*
-          if (workItemType === 'Bug' && originalReasonValue === 'As Designed' && onSavedReasonValue !== 'As Designed') {
-            console.log(
-              `Microsoft.VSTS.Common.ResolvedReason changed from 'As Designed' to '${onSavedReasonValue}'. Adding tag. Original reason value: '${originalReasonValue}'`
-            );
-            addTagsToWorkItems(workItemId, 'Not As Designed');
-          }
-            */
-
-          if (hasBeenResolvedAlready && (await hasResolvedByBeenSet(SDK.getHost().name, project.name, workItemId)) && (await checkFieldHasValue(workItemId, 'Custom.ResponsibleDeveloper')) === false) {
-            updateFieldValue(workItemId, 'Custom.ResponsibleDeveloper', SDK.getUser().name);
-            hasBeenResolvedAlready = false;
-          }
 
         } catch (error) {
           console.error('Error in onSaved event:', error);
