@@ -22,7 +22,6 @@ const observerConfig = {
   },
   module: {
     rules: [
-      { test: /\.json$/, use: 'json' },
       {
         test: /\.tsx?$/,
         use: 'ts-loader',
@@ -64,7 +63,6 @@ const confighubConfig = {
   },
   module: {
     rules: [
-      { test: /\.json$/, use: 'json' },
       {
         test: /\.tsx?$/,
         use: 'ts-loader',

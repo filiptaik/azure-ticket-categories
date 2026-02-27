@@ -10,12 +10,26 @@ import * as SDK from 'azure-devops-extension-sdk';
 import flatten from 'lodash/flatten';
 import uniq from 'lodash/uniq';
 import { CascadeConfiguration, CascadeMap, FieldOptions, ICascade } from './types';
+import featureCatalogueMapping from './mappings/feature-catalogue.mapping.json';
+import {
+  getFeatureLeafMapping,
+  getFeatureNamesForModule,
+  getModuleDefaults,
+  IFeatureCatalogueMapping,
+} from './feature-catalogue';
 
 type InvalidField = string;
 
 class CascadingFieldsService {
+  private static readonly moduleField = 'Custom.Module';
+  private static readonly featureNameField = 'Custom.FeatureName';
+  private static readonly featureIdField = 'Custom.FeatureID';
+  private static readonly derivedCategoryField = 'Custom.Category';
+  private static readonly areaPathField = 'System.AreaPath';
+
   private workItemService: IWorkItemFormService;
   private cascadeMap: CascadeMap;
+  private featureCatalogue: IFeatureCatalogueMapping;
 
   public constructor(
     workItemService: IWorkItemFormService,
@@ -23,44 +37,18 @@ class CascadingFieldsService {
   ) {
     this.workItemService = workItemService;
     this.cascadeMap = this.createCascadingMap(cascadeConfiguration);
-    this.fetchAndLogInitialValues();
-  }
-  private async fetchAndLogInitialValues(): Promise<void> {
-    const testCustomerField = 'Custom.TestCustomer'; // Adjust the field reference name if needed
-
-    const testCustomerValue = await this.workItemService.getFieldValue(testCustomerField, {
-      returnOriginalValue: false,
-    });
-
-    if (testCustomerValue !== undefined && testCustomerValue !== null) {
-      // Trigger cascading logic based on the initial value of Custom.TestCustomer
-      await this.updateImplementationTeam(testCustomerValue as string);
-    } else {
-      console.log(`Initial value of ${testCustomerField} is undefined or null.`);
-    }
+    this.featureCatalogue = featureCatalogueMapping as IFeatureCatalogueMapping;
+    this.applyFeatureCatalogueOnLoad();
   }
 
-  private async updateImplementationTeam(customerValue: string): Promise<void> {
-    const implementationTeamField = 'Custom.TestImplementationTeam';
-    const cascade = this.cascadeMap[implementationTeamField];
-
-    if (!cascade) {
-      console.log(`No cascade configuration for ${implementationTeamField}`);
+  private async applyFeatureCatalogueOnLoad(): Promise<void> {
+    const featureName = await this.getFieldValue(CascadingFieldsService.featureNameField);
+    if (featureName) {
+      await this.performFeatureCatalogueCascading(CascadingFieldsService.featureNameField);
       return;
     }
 
-    const matchingTeams = Object.entries(cascade.cascades).filter(([team, dependencies]) => {
-      const customers = dependencies['Custom.TestCustomer'] as string[];
-      return customers && customers.includes(customerValue);
-    });
-
-    if (matchingTeams.length > 0) {
-      const selectedTeam = matchingTeams[0][0]; // Auto-select the first matching team
-      console.log(`Setting ${implementationTeamField} to: ${selectedTeam}`);
-      await this.workItemService.setFieldValue(implementationTeamField, selectedTeam);
-    } else {
-      console.log(`No matching team found for ${customerValue}`);
-    }
+    await this.performFeatureCatalogueCascading(CascadingFieldsService.moduleField);
   }
 
   private createCascadingMap(cascadeConfiguration: CascadeConfiguration): CascadeMap {
@@ -103,6 +91,8 @@ class CascadingFieldsService {
   public async resetAllCascades(): Promise<void[]> {
     const fields = flatten(Object.values(this.cascadeMap).map(value => value.alters));
     const fieldsToReset = new Set<string>(fields);
+    fieldsToReset.add(CascadingFieldsService.featureNameField);
+
     return Promise.all(
       Array.from(fieldsToReset).map(async fieldName => {
         const values = await this.workItemService.getAllowedFieldValues(fieldName);
@@ -112,11 +102,96 @@ class CascadingFieldsService {
   }
 
   public async cascadeAll(): Promise<void[][]> {
+    await this.applyFeatureCatalogueOnLoad();
+
     return Promise.all(
       Object.keys(this.cascadeMap).map(async field => this.performCascading(field))
     );
   }
+
+  private async getFieldValue(fieldName: string): Promise<string> {
+    const value = (await this.workItemService.getFieldValue(fieldName, {
+      returnOriginalValue: false,
+    })) as string;
+    return value || '';
+  }
+
+  private async setDerivedCategoryAndArea(category?: string, area?: string): Promise<void> {
+    await this.workItemService.setFieldValue(CascadingFieldsService.derivedCategoryField, category || '');
+    if (area) {
+      await this.workItemService.setFieldValue(CascadingFieldsService.areaPathField, area);
+    }
+  }
+
+  private async filterFeatureNamesByModule(moduleName: string): Promise<void> {
+    const allFeatureNames = (await this.workItemService.getAllowedFieldValues(
+      CascadingFieldsService.featureNameField
+    )) as string[];
+    const allowedForModule = getFeatureNamesForModule(this.featureCatalogue, moduleName);
+    const filtered = moduleName
+      ? allFeatureNames.filter(value => allowedForModule.includes(value))
+      : allFeatureNames;
+
+    await (this.workItemService as any).filterAllowedFieldValues(
+      CascadingFieldsService.featureNameField,
+      filtered
+    );
+  }
+
+  private async cascadeFromModule(): Promise<void> {
+    const moduleName = await this.getFieldValue(CascadingFieldsService.moduleField);
+
+    await this.filterFeatureNamesByModule(moduleName);
+    await this.workItemService.setFieldValue(CascadingFieldsService.featureNameField, '');
+    await this.workItemService.setFieldValue(CascadingFieldsService.featureIdField, '');
+
+    const defaults = getModuleDefaults(this.featureCatalogue, moduleName);
+    await this.setDerivedCategoryAndArea(defaults.category, defaults.area);
+  }
+
+  private async cascadeFromFeatureName(): Promise<void> {
+    const moduleName = await this.getFieldValue(CascadingFieldsService.moduleField);
+    const featureName = await this.getFieldValue(CascadingFieldsService.featureNameField);
+
+    if (!moduleName || !featureName) {
+      await this.workItemService.setFieldValue(CascadingFieldsService.featureIdField, '');
+      const defaults = getModuleDefaults(this.featureCatalogue, moduleName);
+      await this.setDerivedCategoryAndArea(defaults.category, defaults.area);
+      return;
+    }
+
+    const leaf = getFeatureLeafMapping(this.featureCatalogue, moduleName, featureName);
+    if (!leaf) {
+      await this.workItemService.setFieldValue(CascadingFieldsService.featureIdField, '');
+      const defaults = getModuleDefaults(this.featureCatalogue, moduleName);
+      await this.setDerivedCategoryAndArea(defaults.category, defaults.area);
+      return;
+    }
+
+    await this.workItemService.setFieldValue(CascadingFieldsService.featureIdField, leaf.featureId);
+    await this.workItemService.setFieldValue(CascadingFieldsService.derivedCategoryField, leaf.category);
+    await this.workItemService.setFieldValue(CascadingFieldsService.areaPathField, leaf.area);
+  }
+
+  private async performFeatureCatalogueCascading(changedFieldReferenceName: string): Promise<void> {
+    if (changedFieldReferenceName === CascadingFieldsService.moduleField) {
+      await this.cascadeFromModule();
+      return;
+    }
+
+    if (changedFieldReferenceName === CascadingFieldsService.featureNameField) {
+      await this.cascadeFromFeatureName();
+    }
+  }
+
   public async performCascading(changedFieldReferenceName: string): Promise<void[]> {
+    if (
+      changedFieldReferenceName === CascadingFieldsService.moduleField ||
+      changedFieldReferenceName === CascadingFieldsService.featureNameField
+    ) {
+      await this.performFeatureCatalogueCascading(changedFieldReferenceName);
+    }
+
     const changedFieldValue = (await this.workItemService.getFieldValue(changedFieldReferenceName, {
       returnOriginalValue: false,
     })) as string;
@@ -186,20 +261,7 @@ class CascadingFieldsService {
   }
 
   public async getconfigFieldValues() {
-    const testCustomer = await this.workItemService.getFieldValue('Custom.TestCustomer', {
-      returnOriginalValue: false,
-    });
-    const testImplementationTeam = await this.workItemService.getFieldValue(
-      'Custom.TestImplementationTeam',
-      {
-        returnOriginalValue: false,
-      }
-    );
-    if (typeof testCustomer === 'string' && typeof testImplementationTeam === 'undefined') {
-      this.performCascading(JSON.stringify(testCustomer));
-    } else {
-      return;
-    }
+    await this.applyFeatureCatalogueOnLoad();
   }
 }
 

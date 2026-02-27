@@ -16,7 +16,9 @@
     "gallery-publish": "tfx extension publish --rev-version",
     "clean": "rimraf ./dist && rimraf ./*.vsix",
     "lint": "eslint .",
-    "serve": "webpack serve --config webpack.dev.config.js"
+    "serve": "webpack serve --config webpack.dev.config.js",
+    "generate:feature-catalogue-mapping": "powershell -ExecutionPolicy Bypass -File ./scripts/generate-feature-catalogue-mapping.ps1 -ExcelPath \"C:\\Users\\FilipTaik\\Downloads\\Feature's catalogue (1).xlsx\" -OutputPath \"src/common/mappings/feature-catalogue.mapping.json\"",
+    "test:unit": "tsc -p tsconfig.test.json && node --test .tmp-tests/tests/**/*.test.js"
   },
   "dependencies": {
     "azure-devops-extension-api": "^1.152.3",

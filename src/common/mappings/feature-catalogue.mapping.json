@@ -1,0 +1,788 @@
+﻿{
+    "generatedAtUtc":  "2026-02-27T08:00:14.7787812Z",
+    "sourceFile":  "C:\\Users\\FilipTaik\\Downloads\\Feature\u0027s catalogue (1).xlsx",
+    "modules":  {
+                    "Actions on Mobile App":  {
+                                                  "features":  {
+                                                                   "Additional Services":  {
+                                                                                               "featureId":  "MOB-CSO-010",
+                                                                                               "category":  "FSM",
+                                                                                               "area":  "CSO Completion"
+                                                                                           },
+                                                                   "Allocated Parts":  {
+                                                                                           "featureId":  "MOB-CSO-027",
+                                                                                           "category":  "FSM",
+                                                                                           "area":  "CSO Completion"
+                                                                                       },
+                                                                   "Asset Condition":  {
+                                                                                           "featureId":  "MOB-CSO-011",
+                                                                                           "category":  "FSM",
+                                                                                           "area":  "CSO Completion"
+                                                                                       },
+                                                                   "Assign Components":  {
+                                                                                             "featureId":  "MOB-CSO-012",
+                                                                                             "category":  "FSM",
+                                                                                             "area":  "CSO Completion"
+                                                                                         },
+                                                                   "Attachments":  {
+                                                                                       "featureId":  "MOB-CSO-023",
+                                                                                       "category":  "FSM",
+                                                                                       "area":  "CSO Completion"
+                                                                                   },
+                                                                   "Calendar":  {
+                                                                                    "featureId":  "MOB-CSO-004",
+                                                                                    "category":  "FSM",
+                                                                                    "area":  "CSO Completion"
+                                                                                },
+                                                                   "Case Creation":  {
+                                                                                         "featureId":  "SUP-002",
+                                                                                         "category":  "Support",
+                                                                                         "area":  "CSO Completion"
+                                                                                     },
+                                                                   "Case Custom Fields":  {
+                                                                                              "featureId":  "MOB-CSO-037",
+                                                                                              "category":  "FSM",
+                                                                                              "area":  "CSO Completion"
+                                                                                          },
+                                                                   "Case View":  {
+                                                                                     "featureId":  "SUP-001",
+                                                                                     "category":  "Support",
+                                                                                     "area":  "CSO Completion"
+                                                                                 },
+                                                                   "Contacts":  {
+                                                                                    "featureId":  "MOB-CSO-031",
+                                                                                    "category":  "FSM",
+                                                                                    "area":  "CSO Completion"
+                                                                                },
+                                                                   "Create Case from Equipment":  {
+                                                                                                      "featureId":  "SUP-003",
+                                                                                                      "category":  "Support",
+                                                                                                      "area":  "CSO Completion"
+                                                                                                  },
+                                                                   "Create CSO from Customer":  {
+                                                                                                    "featureId":  "MOB-CSO-001",
+                                                                                                    "category":  "FSM",
+                                                                                                    "area":  "CSO Completion"
+                                                                                                },
+                                                                   "Create CSO from Equipment":  {
+                                                                                                     "featureId":  "MOB-CSO-002",
+                                                                                                     "category":  "FSM",
+                                                                                                     "area":  "CSO Completion"
+                                                                                                 },
+                                                                   "Create CSO from QR Code":  {
+                                                                                                   "featureId":  "MOB-CSO-003",
+                                                                                                   "category":  "FSM",
+                                                                                                   "area":  "CSO Completion"
+                                                                                               },
+                                                                   "Customer \u0026 Equipment Service History":  {
+                                                                                                                     "featureId":  "MOB-CSO-021",
+                                                                                                                     "category":  "FSM",
+                                                                                                                     "area":  "CSO Completion"
+                                                                                                                 },
+                                                                   "Customer Custom Fields":  {
+                                                                                                  "featureId":  "MOB-CSO-036",
+                                                                                                  "category":  "FSM",
+                                                                                                  "area":  "CSO Completion"
+                                                                                              },
+                                                                   "Customer Feedback":  {
+                                                                                             "featureId":  "MOB-CSO-033",
+                                                                                             "category":  "FSM",
+                                                                                             "area":  "CSO Completion"
+                                                                                         },
+                                                                   "Customer Search":  {
+                                                                                           "featureId":  "MOB-CSO-034",
+                                                                                           "category":  "FSM",
+                                                                                           "area":  "CSO Completion"
+                                                                                       },
+                                                                   "Email Service Report":  {
+                                                                                                "featureId":  "MOB-CSO-022",
+                                                                                                "category":  "FSM",
+                                                                                                "area":  "CSO Completion"
+                                                                                            },
+                                                                   "Equipment Assignment":  {
+                                                                                                "featureId":  "CMMS-EQ-002",
+                                                                                                "category":  "CMMS",
+                                                                                                "area":  "CSO Completion"
+                                                                                            },
+                                                                   "Equipment Custom Fields":  {
+                                                                                                   "featureId":  "MOB-CSO-035",
+                                                                                                   "category":  "FSM",
+                                                                                                   "area":  "CSO Completion"
+                                                                                               },
+                                                                   "Equipment Page":  {
+                                                                                          "featureId":  "CMMS-EQ-004",
+                                                                                          "category":  "CMMS",
+                                                                                          "area":  "CSO Completion"
+                                                                                      },
+                                                                   "Equipment Readings":  {
+                                                                                              "featureId":  "CMMS-EQ-001",
+                                                                                              "category":  "CMMS",
+                                                                                              "area":  "CSO Completion"
+                                                                                          },
+                                                                   "Equipment Search":  {
+                                                                                            "featureId":  "CMMS-EQ-003",
+                                                                                            "category":  "CMMS",
+                                                                                            "area":  "CSO Completion"
+                                                                                        },
+                                                                   "Equipment Update":  {
+                                                                                            "featureId":  "MOB-CSO-018",
+                                                                                            "category":  "FSM",
+                                                                                            "area":  "CSO Completion"
+                                                                                        },
+                                                                   "Estimates (Mobile Assessment)":  {
+                                                                                                         "featureId":  "MOB-CSO-028",
+                                                                                                         "category":  "FSM",
+                                                                                                         "area":  "CSO Completion"
+                                                                                                     },
+                                                                   "Expenses":  {
+                                                                                    "featureId":  "MOB-CSO-019",
+                                                                                    "category":  "FSM",
+                                                                                    "area":  "CSO Completion"
+                                                                                },
+                                                                   "Failure Report":  {
+                                                                                          "featureId":  "MOB-CSO-026",
+                                                                                          "category":  "FSM",
+                                                                                          "area":  "CSO Completion"
+                                                                                      },
+                                                                   "Follow-up Tasks":  {
+                                                                                           "featureId":  "MOB-CSO-032",
+                                                                                           "category":  "FSM",
+                                                                                           "area":  "CSO Completion"
+                                                                                       },
+                                                                   "Mass Time Entry":  {
+                                                                                           "featureId":  "TIME-003",
+                                                                                           "category":  "Timekeeping",
+                                                                                           "area":  "CSO Completion"
+                                                                                       },
+                                                                   "Ongoing Service":  {
+                                                                                           "featureId":  "MOB-CSO-038",
+                                                                                           "category":  "FSM",
+                                                                                           "area":  "CSO Completion"
+                                                                                       },
+                                                                   "Opportunity Capture":  {
+                                                                                               "featureId":  "MOB-CSO-016",
+                                                                                               "category":  "FSM",
+                                                                                               "area":  "CSO Completion"
+                                                                                           },
+                                                                   "Parts Delivery":  {
+                                                                                          "featureId":  "MOB-CSO-009",
+                                                                                          "category":  "FSM",
+                                                                                          "area":  "CSO Completion"
+                                                                                      },
+                                                                   "Parts Used":  {
+                                                                                      "featureId":  "MOB-CSO-008",
+                                                                                      "category":  "FSM",
+                                                                                      "area":  "CSO Completion"
+                                                                                  },
+                                                                   "Photos":  {
+                                                                                  "featureId":  "MOB-CSO-017",
+                                                                                  "category":  "FSM",
+                                                                                  "area":  "CSO Completion"
+                                                                              },
+                                                                   "Quality Checks (Checklist)":  {
+                                                                                                      "featureId":  "MOB-CSO-014",
+                                                                                                      "category":  "FSM",
+                                                                                                      "area":  "CSO Completion"
+                                                                                                  },
+                                                                   "Replacement":  {
+                                                                                       "featureId":  "MOB-CSO-029",
+                                                                                       "category":  "FSM",
+                                                                                       "area":  "CSO Completion"
+                                                                                   },
+                                                                   "Request Parts":  {
+                                                                                         "featureId":  "MOB-CSO-007",
+                                                                                         "category":  "FSM",
+                                                                                         "area":  "CSO Completion"
+                                                                                     },
+                                                                   "Rescheduling or Termination":  {
+                                                                                                       "featureId":  "MOB-CSO-030",
+                                                                                                       "category":  "FSM",
+                                                                                                       "area":  "CSO Completion"
+                                                                                                   },
+                                                                   "Return Items":  {
+                                                                                        "featureId":  "MOB-CSO-020",
+                                                                                        "category":  "FSM",
+                                                                                        "area":  "CSO Completion"
+                                                                                    },
+                                                                   "Service Report":  {
+                                                                                          "featureId":  "MOB-CSO-006",
+                                                                                          "category":  "FSM",
+                                                                                          "area":  "CSO Completion"
+                                                                                      },
+                                                                   "Service Tasks":  {
+                                                                                         "featureId":  "MOB-CSO-025",
+                                                                                         "category":  "FSM",
+                                                                                         "area":  "CSO Completion"
+                                                                                     },
+                                                                   "Shift Time":  {
+                                                                                      "featureId":  "TIME-002",
+                                                                                      "category":  "Timekeeping",
+                                                                                      "area":  "CSO Completion"
+                                                                                  },
+                                                                   "Signature – Customer":  {
+                                                                                                "featureId":  "MOB-CSO-039",
+                                                                                                "category":  "FSM",
+                                                                                                "area":  "CSO Completion"
+                                                                                            },
+                                                                   "Signature – Inventory Checkout":  {
+                                                                                                          "featureId":  "MOB-CSO-042",
+                                                                                                          "category":  "FSM",
+                                                                                                          "area":  "CSO Completion"
+                                                                                                      },
+                                                                   "Signature – Technician":  {
+                                                                                                  "featureId":  "MOB-CSO-040",
+                                                                                                  "category":  "FSM",
+                                                                                                  "area":  "CSO Completion"
+                                                                                              },
+                                                                   "Signature – Upon Delivery":  {
+                                                                                                     "featureId":  "MOB-CSO-041",
+                                                                                                     "category":  "FSM",
+                                                                                                     "area":  "CSO Completion"
+                                                                                                 },
+                                                                   "Signature Capture":  {
+                                                                                             "featureId":  "MOB-CSO-013",
+                                                                                             "category":  "FSM",
+                                                                                             "area":  "CSO Completion"
+                                                                                         },
+                                                                   "Switch Service":  {
+                                                                                          "featureId":  "MOB-CSO-024",
+                                                                                          "category":  "FSM",
+                                                                                          "area":  "CSO Completion"
+                                                                                      },
+                                                                   "Technician Profile":  {
+                                                                                              "featureId":  "MOB-CSO-005",
+                                                                                              "category":  "FSM",
+                                                                                              "area":  "CSO Completion"
+                                                                                          },
+                                                                   "Time Entry":  {
+                                                                                      "featureId":  "TIME-001",
+                                                                                      "category":  "Timekeeping",
+                                                                                      "area":  "CSO Completion"
+                                                                                  },
+                                                                   "Timesheet Review \u0026 Approval":  {
+                                                                                                            "featureId":  "TIME-004",
+                                                                                                            "category":  "Timekeeping",
+                                                                                                            "area":  "CSO Completion"
+                                                                                                        },
+                                                                   "Usage at Completion":  {
+                                                                                               "featureId":  "MOB-CSO-015",
+                                                                                               "category":  "FSM",
+                                                                                               "area":  "CSO Completion"
+                                                                                           }
+                                                               },
+                                                  "defaults":  {
+                                                                   "area":  "CSO Completion"
+                                                               }
+                                              },
+                    "Alerts and PDF":  {
+                                           "features":  {
+                                                            "Customer Email PDF":  {
+                                                                                       "featureId":  "ALERT-006",
+                                                                                       "category":  "FSM",
+                                                                                       "area":  "CSO Post Processing"
+                                                                                   },
+                                                            "Emails from MA/WA":  {
+                                                                                      "featureId":  "ALERT-004",
+                                                                                      "category":  "FSM",
+                                                                                      "area":  "CSO Post Processing"
+                                                                                  },
+                                                            "External Alerts":  {
+                                                                                    "featureId":  "ALERT-001",
+                                                                                    "category":  "FSM",
+                                                                                    "area":  "CSO Post Processing"
+                                                                                },
+                                                            "Internal Alerts":  {
+                                                                                    "featureId":  "ALERT-002",
+                                                                                    "category":  "FSM",
+                                                                                    "area":  "CSO Post Processing"
+                                                                                },
+                                                            "Mass Email Service Reports":  {
+                                                                                               "featureId":  "ALERT-005",
+                                                                                               "category":  "FSM",
+                                                                                               "area":  "CSO Post Processing"
+                                                                                           },
+                                                            "Service Report PDF":  {
+                                                                                       "featureId":  "ALERT-003",
+                                                                                       "category":  "FSM",
+                                                                                       "area":  "CSO Post Processing"
+                                                                                   }
+                                                        },
+                                           "defaults":  {
+                                                            "category":  "FSM",
+                                                            "area":  "CSO Post Processing"
+                                                        }
+                                       },
+                    "Billing: PTM \u0026 Service Contracts":  {
+                                                                  "features":  {
+                                                                                   "Alternative Items":  {
+                                                                                                             "featureId":  "BILL-008",
+                                                                                                             "category":  "FSM",
+                                                                                                             "area":  "CSO Post Processing"
+                                                                                                         },
+                                                                                   "Automatic \u0026 Manual PTM":  {
+                                                                                                                       "featureId":  "BILL-001",
+                                                                                                                       "category":  "FSM",
+                                                                                                                       "area":  "CSO Post Processing"
+                                                                                                                   },
+                                                                                   "BI Tool":  {
+                                                                                                   "featureId":  "BILL-009",
+                                                                                                   "category":  "FSM",
+                                                                                                   "area":  "CSO Post Processing"
+                                                                                               },
+                                                                                   "Billing Expenses":  {
+                                                                                                            "featureId":  "BILL-005",
+                                                                                                            "category":  "FSM",
+                                                                                                            "area":  "CSO Post Processing"
+                                                                                                        },
+                                                                                   "Invoicing":  {
+                                                                                                     "featureId":  "BILL-004",
+                                                                                                     "category":  "FSM",
+                                                                                                     "area":  "CSO Post Processing"
+                                                                                                 },
+                                                                                   "Overtime Rules":  {
+                                                                                                          "featureId":  "BILL-006",
+                                                                                                          "category":  "FSM",
+                                                                                                          "area":  "CSO Post Processing"
+                                                                                                      },
+                                                                                   "Post-PTM Sales Order":  {
+                                                                                                                "featureId":  "BILL-003",
+                                                                                                                "category":  "FSM",
+                                                                                                                "area":  "CSO Post Processing"
+                                                                                                            },
+                                                                                   "Quick Complete CSOs":  {
+                                                                                                               "featureId":  "BILL-007",
+                                                                                                               "category":  "FSM",
+                                                                                                               "area":  "CSO Post Processing"
+                                                                                                           },
+                                                                                   "Service Contract Billing Rules":  {
+                                                                                                                          "featureId":  "BILL-002",
+                                                                                                                          "category":  "FSM",
+                                                                                                                          "area":  "CSO Post Processing"
+                                                                                                                      }
+                                                                               },
+                                                                  "defaults":  {
+                                                                                   "category":  "FSM",
+                                                                                   "area":  "CSO Post Processing"
+                                                                               }
+                                                              },
+                    "Creating Service Order":  {
+                                                   "features":  {
+                                                                    "Automatic CSO Generation":  {
+                                                                                                     "featureId":  "FSM-CSO-006",
+                                                                                                     "category":  "FSM",
+                                                                                                     "area":  "CSO Origination"
+                                                                                                 },
+                                                                    "Create CSO from Project Tasks":  {
+                                                                                                          "featureId":  "FSM-CSO-005",
+                                                                                                          "category":  "FSM",
+                                                                                                          "area":  "CSO Origination"
+                                                                                                      },
+                                                                    "Planned Order from Service Order":  {
+                                                                                                             "featureId":  "FSM-CSO-002",
+                                                                                                             "category":  "FSM",
+                                                                                                             "area":  "CSO Origination"
+                                                                                                         },
+                                                                    "Planner Board – Create CSO or Event":  {
+                                                                                                                "featureId":  "FSM-CSO-003",
+                                                                                                                "category":  "FSM",
+                                                                                                                "area":  "CSO Origination"
+                                                                                                            },
+                                                                    "Service Reminder":  {
+                                                                                             "featureId":  "FSM-CSO-004",
+                                                                                             "category":  "FSM",
+                                                                                             "area":  "CSO Origination"
+                                                                                         },
+                                                                    "Service Requester":  {
+                                                                                              "featureId":  "FSM-CSO-001",
+                                                                                              "category":  "FSM",
+                                                                                              "area":  "CSO Origination"
+                                                                                          }
+                                                                },
+                                                   "defaults":  {
+                                                                    "category":  "FSM",
+                                                                    "area":  "CSO Origination"
+                                                                }
+                                               },
+                    "Equipment":  {
+                                      "features":  {
+                                                       "Assigning Equipment to Service Order":  {
+                                                                                                    "featureId":  "CMMS-EQ-007",
+                                                                                                    "category":  "CMMS",
+                                                                                                    "area":  "CSO Post Processing"
+                                                                                                },
+                                                       "Equipment Hierarchy":  {
+                                                                                   "featureId":  "CMMS-EQ-011",
+                                                                                   "category":  "CMMS",
+                                                                                   "area":  "CSO Post Processing"
+                                                                               },
+                                                       "Equipment Log":  {
+                                                                             "featureId":  "CMMS-EQ-008",
+                                                                             "category":  "CMMS",
+                                                                             "area":  "CSO Post Processing"
+                                                                         },
+                                                       "Equipment Page \u0026 Search (Mobile)":  {
+                                                                                                     "featureId":  "CMMS-EQ-012",
+                                                                                                     "category":  "CMMS",
+                                                                                                     "area":  "CSO Completion"
+                                                                                                 },
+                                                       "FAM":  {
+                                                                   "featureId":  "CMMS-EQ-005",
+                                                                   "category":  "CMMS",
+                                                                   "area":  "CSO Post Processing"
+                                                               },
+                                                       "Fleeting (Actions on Transactions)":  {
+                                                                                                  "featureId":  "CMMS-EQ-006",
+                                                                                                  "category":  "CMMS",
+                                                                                                  "area":  "CSO Post Processing"
+                                                                                              },
+                                                       "Usage Readings":  {
+                                                                              "featureId":  "CMMS-EQ-009",
+                                                                              "category":  "CMMS",
+                                                                              "area":  "CSO Post Processing"
+                                                                          },
+                                                       "Warranty Tracking":  {
+                                                                                 "featureId":  "CMMS-EQ-010",
+                                                                                 "category":  "CMMS",
+                                                                                 "area":  "CSO Post Processing"
+                                                                             }
+                                                   },
+                                      "defaults":  {
+                                                       "category":  "CMMS"
+                                                   }
+                                  },
+                    "Functionalities on Transactions":  {
+                                                            "features":  {
+                                                                             "Approve Parts":  {
+                                                                                                   "featureId":  "FSM-TXN-009",
+                                                                                                   "category":  "FSM",
+                                                                                                   "area":  "CSO Origination"
+                                                                                               },
+                                                                             "Inventory Count (Mobile)":  {
+                                                                                                              "featureId":  "FSM-TXN-010",
+                                                                                                              "category":  "FSM",
+                                                                                                              "area":  "CSO Origination"
+                                                                                                          },
+                                                                             "Opportunity to Estimate to Sales Order Conversion":  {
+                                                                                                                                       "featureId":  "FSM-TXN-004",
+                                                                                                                                       "category":  "FSM",
+                                                                                                                                       "area":  "CSO Origination"
+                                                                                                                                   },
+                                                                             "Part Allocation":  {
+                                                                                                     "featureId":  "FSM-TXN-008",
+                                                                                                     "category":  "FSM",
+                                                                                                     "area":  "CSO Origination"
+                                                                                                 },
+                                                                             "Part Transfers (Including Mobile)":  {
+                                                                                                                       "featureId":  "FSM-TXN-005",
+                                                                                                                       "category":  "FSM",
+                                                                                                                       "area":  "CSO Origination"
+                                                                                                                   },
+                                                                             "Raising Purchase Order from CSO":  {
+                                                                                                                     "featureId":  "FSM-TXN-003",
+                                                                                                                     "category":  "FSM",
+                                                                                                                     "area":  "CSO Origination"
+                                                                                                                 },
+                                                                             "Raising RMA from Case or CSO":  {
+                                                                                                                  "featureId":  "FSM-TXN-002",
+                                                                                                                  "category":  "FSM",
+                                                                                                                  "area":  "CSO Origination"
+                                                                                                              },
+                                                                             "Selling Service Contract":  {
+                                                                                                              "featureId":  "FSM-TXN-001",
+                                                                                                              "category":  "FSM",
+                                                                                                              "area":  "CSO Origination"
+                                                                                                          },
+                                                                             "Service Contract Creation \u0026 Renewal":  {
+                                                                                                                              "featureId":  "FSM-TXN-007",
+                                                                                                                              "category":  "FSM",
+                                                                                                                              "area":  "CSO Origination"
+                                                                                                                          },
+                                                                             "Service Plan Configuration":  {
+                                                                                                                "featureId":  "FSM-TXN-006",
+                                                                                                                "category":  "FSM",
+                                                                                                                "area":  "CSO Origination"
+                                                                                                            }
+                                                                         },
+                                                            "defaults":  {
+                                                                             "category":  "FSM",
+                                                                             "area":  "CSO Origination"
+                                                                         }
+                                                        },
+                    "Health":  {
+                                   "features":  {
+                                                    "HSW Certificates":  {
+                                                                             "featureId":  "HSW-003",
+                                                                             "category":  "HSW",
+                                                                             "area":  "Safety \u0026 Wellness"
+                                                                         },
+                                                    "HSW Scheduling":  {
+                                                                           "featureId":  "HSW-002",
+                                                                           "category":  "HSW",
+                                                                           "area":  "Safety \u0026 Wellness"
+                                                                       },
+                                                    "Prerequisite Questions":  {
+                                                                                   "featureId":  "HSW-001",
+                                                                                   "category":  "HSW",
+                                                                                   "area":  "Safety \u0026 Wellness"
+                                                                               }
+                                                },
+                                   "defaults":  {
+                                                    "category":  "HSW",
+                                                    "area":  "Safety \u0026 Wellness"
+                                                }
+                               },
+                    "NetSuite Projects":  {
+                                              "features":  {
+                                                               "Sync Projects \u0026 Tasks with CSOs":  {
+                                                                                                            "featureId":  "FSM-PROJ-001",
+                                                                                                            "category":  "FSM",
+                                                                                                            "area":  "CSO Origination"
+                                                                                                        }
+                                                           },
+                                              "defaults":  {
+                                                               "category":  "FSM",
+                                                               "area":  "CSO Origination"
+                                                           }
+                                          },
+                    "Planner Board and Scheduling":  {
+                                                         "features":  {
+                                                                          "Actual vs Planned Hours Breakdown":  {
+                                                                                                                    "featureId":  "FSM-PB-012",
+                                                                                                                    "category":  "FSM",
+                                                                                                                    "area":  "CSO Origination"
+                                                                                                                },
+                                                                          "CSO Scheduling \u0026 Rescheduling":  {
+                                                                                                                     "featureId":  "FSM-PB-004",
+                                                                                                                     "category":  "FSM",
+                                                                                                                     "area":  "CSO Origination"
+                                                                                                                 },
+                                                                          "Downtime Status on Planner Board":  {
+                                                                                                                   "featureId":  "FSM-PB-008",
+                                                                                                                   "category":  "FSM",
+                                                                                                                   "area":  "CSO Origination"
+                                                                                                               },
+                                                                          "Grabbing CSOs":  {
+                                                                                                "featureId":  "FSM-PB-006",
+                                                                                                "category":  "FSM",
+                                                                                                "area":  "CSO Origination"
+                                                                                            },
+                                                                          "Planner Board – Crew View":  {
+                                                                                                            "featureId":  "FSM-PB-002",
+                                                                                                            "category":  "FSM",
+                                                                                                            "area":  "CSO Origination"
+                                                                                                        },
+                                                                          "Planner Board – Map View":  {
+                                                                                                           "featureId":  "FSM-PB-009",
+                                                                                                           "category":  "FSM",
+                                                                                                           "area":  "CSO Origination"
+                                                                                                       },
+                                                                          "Planner Board – Service Order View":  {
+                                                                                                                     "featureId":  "FSM-PB-003",
+                                                                                                                     "category":  "FSM",
+                                                                                                                     "area":  "CSO Origination"
+                                                                                                                 },
+                                                                          "Planner Board – Technician View":  {
+                                                                                                                  "featureId":  "FSM-PB-001",
+                                                                                                                  "category":  "FSM",
+                                                                                                                  "area":  "CSO Origination"
+                                                                                                              },
+                                                                          "Project Resources":  {
+                                                                                                    "featureId":  "FSM-PB-011",
+                                                                                                    "category":  "FSM",
+                                                                                                    "area":  "CSO Origination"
+                                                                                                },
+                                                                          "Repeating Technician Trips":  {
+                                                                                                             "featureId":  "FSM-PB-005",
+                                                                                                             "category":  "FSM",
+                                                                                                             "area":  "CSO Origination"
+                                                                                                         },
+                                                                          "Resource Plan on CSO":  {
+                                                                                                       "featureId":  "FSM-PB-007",
+                                                                                                       "category":  "FSM",
+                                                                                                       "area":  "CSO Origination"
+                                                                                                   }
+                                                                      },
+                                                         "defaults":  {
+                                                                          "category":  "FSM",
+                                                                          "area":  "CSO Origination"
+                                                                      }
+                                                     },
+                    "Preventive Maintenance":  {
+                                                   "features":  {
+                                                                    "PM Audit Log":  {
+                                                                                         "featureId":  "PM-011",
+                                                                                         "category":  "CMMS",
+                                                                                         "area":  "Modules"
+                                                                                     },
+                                                                    "PM Task Matrix":  {
+                                                                                           "featureId":  "PM-006",
+                                                                                           "category":  "CMMS",
+                                                                                           "area":  "Modules"
+                                                                                       },
+                                                                    "PM Task Parts Automation":  {
+                                                                                                     "featureId":  "PM-014",
+                                                                                                     "category":  "CMMS",
+                                                                                                     "area":  "Modules"
+                                                                                                 },
+                                                                    "PM Tasks Automation":  {
+                                                                                                "featureId":  "PM-013",
+                                                                                                "category":  "CMMS",
+                                                                                                "area":  "Modules"
+                                                                                            },
+                                                                    "Recurring Trigger – Calendar Day":  {
+                                                                                                             "featureId":  "PM-008",
+                                                                                                             "category":  "CMMS",
+                                                                                                             "area":  "Modules"
+                                                                                                         },
+                                                                    "Recurring Trigger – Earliest Usage or Calendar Day":  {
+                                                                                                                               "featureId":  "PM-010",
+                                                                                                                               "category":  "CMMS",
+                                                                                                                               "area":  "Modules"
+                                                                                                                           },
+                                                                    "Recurring Trigger – Fixed Date":  {
+                                                                                                           "featureId":  "PM-009",
+                                                                                                           "category":  "CMMS",
+                                                                                                           "area":  "Modules"
+                                                                                                       },
+                                                                    "Recurring Trigger – Usage Based":  {
+                                                                                                            "featureId":  "PM-007",
+                                                                                                            "category":  "CMMS",
+                                                                                                            "area":  "Modules"
+                                                                                                        },
+                                                                    "Rental Accessories Delivered / Returned":  {
+                                                                                                                    "featureId":  "PM-003",
+                                                                                                                    "category":  "CMMS",
+                                                                                                                    "area":  "Modules"
+                                                                                                                },
+                                                                    "Rental Contract Updates":  {
+                                                                                                    "featureId":  "PM-001",
+                                                                                                    "category":  "CMMS",
+                                                                                                    "area":  "Modules"
+                                                                                                },
+                                                                    "Rental Equipment Delivery":  {
+                                                                                                      "featureId":  "PM-004",
+                                                                                                      "category":  "CMMS",
+                                                                                                      "area":  "Modules"
+                                                                                                  },
+                                                                    "Rental PM":  {
+                                                                                      "featureId":  "PM-012",
+                                                                                      "category":  "CMMS",
+                                                                                      "area":  "Modules"
+                                                                                  },
+                                                                    "Rental Swap":  {
+                                                                                        "featureId":  "PM-002",
+                                                                                        "category":  "CMMS",
+                                                                                        "area":  "Modules"
+                                                                                    },
+                                                                    "Service Configurations":  {
+                                                                                                   "featureId":  "PM-005",
+                                                                                                   "category":  "CMMS",
+                                                                                                   "area":  "Modules"
+                                                                                               }
+                                                                },
+                                                   "defaults":  {
+                                                                    "category":  "CMMS",
+                                                                    "area":  "Modules"
+                                                                }
+                                               },
+                    "Rental":  {
+                                   "features":  {
+                                                    "Manual \u0026 Scheduled Billing":  {
+                                                                                            "featureId":  "RENT-001",
+                                                                                            "category":  "Rental",
+                                                                                            "area":  "Modules"
+                                                                                        },
+                                                    "Rental Contract":  {
+                                                                            "featureId":  "RENT-007",
+                                                                            "category":  "Rental",
+                                                                            "area":  "Modules"
+                                                                        },
+                                                    "Rental Equipment \u0026 Accessories":  {
+                                                                                                "featureId":  "RENT-004",
+                                                                                                "category":  "Rental",
+                                                                                                "area":  "Modules"
+                                                                                            },
+                                                    "Rental Equipment / Accessory Booking":  {
+                                                                                                 "featureId":  "RENT-005",
+                                                                                                 "category":  "Rental",
+                                                                                                 "area":  "Modules"
+                                                                                             },
+                                                    "Rental Planner Board":  {
+                                                                                 "featureId":  "RENT-003",
+                                                                                 "category":  "Rental",
+                                                                                 "area":  "Modules"
+                                                                             },
+                                                    "Rental Service Order":  {
+                                                                                 "featureId":  "RENT-008",
+                                                                                 "category":  "Rental",
+                                                                                 "area":  "Modules"
+                                                                             },
+                                                    "Rental Statuses":  {
+                                                                            "featureId":  "RENT-002",
+                                                                            "category":  "Rental",
+                                                                            "area":  "Modules"
+                                                                        },
+                                                    "Rental Time \u0026 Materials":  {
+                                                                                         "featureId":  "RENT-006",
+                                                                                         "category":  "Rental",
+                                                                                         "area":  "Modules"
+                                                                                     }
+                                                },
+                                   "defaults":  {
+                                                    "category":  "Rental",
+                                                    "area":  "Modules"
+                                                }
+                               },
+                    "Tools":  {
+                                  "features":  {
+                                                   "Check-in / Check-out CSO":  {
+                                                                                    "featureId":  "TOOLS-002",
+                                                                                    "category":  "CMMS",
+                                                                                    "area":  "Modules"
+                                                                                },
+                                                   "Check-in / Check-out Technician":  {
+                                                                                           "featureId":  "TOOLS-003",
+                                                                                           "category":  "CMMS",
+                                                                                           "area":  "Modules"
+                                                                                       },
+                                                   "Link Tools to Equipment":  {
+                                                                                   "featureId":  "TOOLS-001",
+                                                                                   "category":  "CMMS",
+                                                                                   "area":  "Modules"
+                                                                               },
+                                                   "Projects":  {
+                                                                    "featureId":  "TOOLS-004",
+                                                                    "category":  "CMMS",
+                                                                    "area":  "Modules"
+                                                                },
+                                                   "Tools Automation (MA/WA)":  {
+                                                                                    "featureId":  "TOOLS-006",
+                                                                                    "category":  "CMMS",
+                                                                                    "area":  "Modules"
+                                                                                },
+                                                   "Tools Billing":  {
+                                                                         "featureId":  "TOOLS-005",
+                                                                         "category":  "CMMS",
+                                                                         "area":  "Modules"
+                                                                     }
+                                               },
+                                  "defaults":  {
+                                                   "category":  "CMMS",
+                                                   "area":  "Modules"
+                                               }
+                              },
+                    "Tools \u0026 Service Zones":  {
+                                                       "features":  {
+                                                                        "Required Skills":  {
+                                                                                                "featureId":  "FSM-PB-010",
+                                                                                                "category":  "FSM",
+                                                                                                "area":  "CSO Origination"
+                                                                                            }
+                                                                    },
+                                                       "defaults":  {
+                                                                        "category":  "FSM",
+                                                                        "area":  "CSO Origination"
+                                                                    }
+                                                   }
+                }
+}
