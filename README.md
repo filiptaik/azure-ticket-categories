@@ -263,7 +263,7 @@ Important:
 
 ### 5. Configure extension manifest in project hub
 
-1. Open project admin hub `Cascading Lists`.
+1. Open project admin hub `Feature Catalogue Automation`.
 2. Paste/update manifest JSON with your field references.
 3. Save configuration.
 

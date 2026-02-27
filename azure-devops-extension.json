@@ -52,12 +52,12 @@
     {
       "id": "cascading-lists-config-hub",
       "type": "ms.vss-web.hub",
-      "description": "Configuration hub for a cascading lists",
+      "description": "Configuration hub for feature catalogue cascading and derived fields",
       "targets": [
         "ms.vss-web.project-admin-hub-group"
       ],
       "properties": {
-        "name": "Cascading Lists",
+        "name": "Feature Catalogue Automation",
         "order": 1,
         "uri": "/dist/confighub.html"
       }
