@@ -14,4 +14,17 @@ export interface ICascade {
 export interface IManifest {
   version?: string;
   cascades?: CascadeConfiguration;
+  featureCatalogue?: IFeatureCatalogueConfiguration;
+}
+
+export interface IFeatureCatalogueFieldRefs {
+  module?: string;
+  featureName?: string;
+  featureId?: string;
+  category?: string;
+  areaPath?: string;
+}
+
+export interface IFeatureCatalogueConfiguration {
+  fields?: IFeatureCatalogueFieldRefs;
 }

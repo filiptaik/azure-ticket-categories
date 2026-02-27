@@ -9,7 +9,14 @@ import { IWorkItemFormService } from 'azure-devops-extension-api/WorkItemTrackin
 import * as SDK from 'azure-devops-extension-sdk';
 import flatten from 'lodash/flatten';
 import uniq from 'lodash/uniq';
-import { CascadeConfiguration, CascadeMap, FieldOptions, ICascade } from './types';
+import {
+  CascadeConfiguration,
+  CascadeMap,
+  FieldOptions,
+  ICascade,
+  IFeatureCatalogueConfiguration,
+  IFeatureCatalogueFieldRefs,
+} from './types';
 import featureCatalogueMapping from './mappings/feature-catalogue.mapping.json';
 import {
   getFeatureLeafMapping,
@@ -21,34 +28,42 @@ import {
 type InvalidField = string;
 
 class CascadingFieldsService {
-  private static readonly moduleField = 'Custom.Module';
-  private static readonly featureNameField = 'Custom.FeatureName';
-  private static readonly featureIdField = 'Custom.FeatureID';
-  private static readonly derivedCategoryField = 'Custom.Category';
-  private static readonly areaPathField = 'System.AreaPath';
+  private static readonly defaultFeatureCatalogueFieldRefs = Object.freeze({
+    module: 'Custom.Module',
+    featureName: 'Custom.FeatureName',
+    featureId: 'Custom.FeatureID',
+    category: 'Custom.Category',
+    areaPath: 'System.AreaPath',
+  });
 
   private workItemService: IWorkItemFormService;
   private cascadeMap: CascadeMap;
   private featureCatalogue: IFeatureCatalogueMapping;
+  private featureFieldRefs: Required<IFeatureCatalogueFieldRefs>;
 
   public constructor(
     workItemService: IWorkItemFormService,
-    cascadeConfiguration: CascadeConfiguration
+    cascadeConfiguration: CascadeConfiguration,
+    featureCatalogueConfiguration?: IFeatureCatalogueConfiguration
   ) {
     this.workItemService = workItemService;
     this.cascadeMap = this.createCascadingMap(cascadeConfiguration);
     this.featureCatalogue = featureCatalogueMapping as IFeatureCatalogueMapping;
+    this.featureFieldRefs = {
+      ...CascadingFieldsService.defaultFeatureCatalogueFieldRefs,
+      ...(featureCatalogueConfiguration?.fields || {}),
+    };
     this.applyFeatureCatalogueOnLoad();
   }
 
   private async applyFeatureCatalogueOnLoad(): Promise<void> {
-    const featureName = await this.getFieldValue(CascadingFieldsService.featureNameField);
+    const featureName = await this.getFieldValue(this.featureFieldRefs.featureName);
     if (featureName) {
-      await this.performFeatureCatalogueCascading(CascadingFieldsService.featureNameField);
+      await this.performFeatureCatalogueCascading(this.featureFieldRefs.featureName);
       return;
     }
 
-    await this.performFeatureCatalogueCascading(CascadingFieldsService.moduleField);
+    await this.performFeatureCatalogueCascading(this.featureFieldRefs.module);
   }
 
   private createCascadingMap(cascadeConfiguration: CascadeConfiguration): CascadeMap {
@@ -91,7 +106,7 @@ class CascadingFieldsService {
   public async resetAllCascades(): Promise<void[]> {
     const fields = flatten(Object.values(this.cascadeMap).map(value => value.alters));
     const fieldsToReset = new Set<string>(fields);
-    fieldsToReset.add(CascadingFieldsService.featureNameField);
+    fieldsToReset.add(this.featureFieldRefs.featureName);
 
     return Promise.all(
       Array.from(fieldsToReset).map(async fieldName => {
@@ -117,15 +132,15 @@ class CascadingFieldsService {
   }
 
   private async setDerivedCategoryAndArea(category?: string, area?: string): Promise<void> {
-    await this.workItemService.setFieldValue(CascadingFieldsService.derivedCategoryField, category || '');
+    await this.workItemService.setFieldValue(this.featureFieldRefs.category, category || '');
     if (area) {
-      await this.workItemService.setFieldValue(CascadingFieldsService.areaPathField, area);
+      await this.workItemService.setFieldValue(this.featureFieldRefs.areaPath, area);
     }
   }
 
   private async filterFeatureNamesByModule(moduleName: string): Promise<void> {
     const allFeatureNames = (await this.workItemService.getAllowedFieldValues(
-      CascadingFieldsService.featureNameField
+      this.featureFieldRefs.featureName
     )) as string[];
     const allowedForModule = getFeatureNamesForModule(this.featureCatalogue, moduleName);
     const filtered = moduleName
@@ -133,28 +148,28 @@ class CascadingFieldsService {
       : allFeatureNames;
 
     await (this.workItemService as any).filterAllowedFieldValues(
-      CascadingFieldsService.featureNameField,
+      this.featureFieldRefs.featureName,
       filtered
     );
   }
 
   private async cascadeFromModule(): Promise<void> {
-    const moduleName = await this.getFieldValue(CascadingFieldsService.moduleField);
+    const moduleName = await this.getFieldValue(this.featureFieldRefs.module);
 
     await this.filterFeatureNamesByModule(moduleName);
-    await this.workItemService.setFieldValue(CascadingFieldsService.featureNameField, '');
-    await this.workItemService.setFieldValue(CascadingFieldsService.featureIdField, '');
+    await this.workItemService.setFieldValue(this.featureFieldRefs.featureName, '');
+    await this.workItemService.setFieldValue(this.featureFieldRefs.featureId, '');
 
     const defaults = getModuleDefaults(this.featureCatalogue, moduleName);
     await this.setDerivedCategoryAndArea(defaults.category, defaults.area);
   }
 
   private async cascadeFromFeatureName(): Promise<void> {
-    const moduleName = await this.getFieldValue(CascadingFieldsService.moduleField);
-    const featureName = await this.getFieldValue(CascadingFieldsService.featureNameField);
+    const moduleName = await this.getFieldValue(this.featureFieldRefs.module);
+    const featureName = await this.getFieldValue(this.featureFieldRefs.featureName);
 
     if (!moduleName || !featureName) {
-      await this.workItemService.setFieldValue(CascadingFieldsService.featureIdField, '');
+      await this.workItemService.setFieldValue(this.featureFieldRefs.featureId, '');
       const defaults = getModuleDefaults(this.featureCatalogue, moduleName);
       await this.setDerivedCategoryAndArea(defaults.category, defaults.area);
       return;
@@ -162,32 +177,32 @@ class CascadingFieldsService {
 
     const leaf = getFeatureLeafMapping(this.featureCatalogue, moduleName, featureName);
     if (!leaf) {
-      await this.workItemService.setFieldValue(CascadingFieldsService.featureIdField, '');
+      await this.workItemService.setFieldValue(this.featureFieldRefs.featureId, '');
       const defaults = getModuleDefaults(this.featureCatalogue, moduleName);
       await this.setDerivedCategoryAndArea(defaults.category, defaults.area);
       return;
     }
 
-    await this.workItemService.setFieldValue(CascadingFieldsService.featureIdField, leaf.featureId);
-    await this.workItemService.setFieldValue(CascadingFieldsService.derivedCategoryField, leaf.category);
-    await this.workItemService.setFieldValue(CascadingFieldsService.areaPathField, leaf.area);
+    await this.workItemService.setFieldValue(this.featureFieldRefs.featureId, leaf.featureId);
+    await this.workItemService.setFieldValue(this.featureFieldRefs.category, leaf.category);
+    await this.workItemService.setFieldValue(this.featureFieldRefs.areaPath, leaf.area);
   }
 
   private async performFeatureCatalogueCascading(changedFieldReferenceName: string): Promise<void> {
-    if (changedFieldReferenceName === CascadingFieldsService.moduleField) {
+    if (changedFieldReferenceName === this.featureFieldRefs.module) {
       await this.cascadeFromModule();
       return;
     }
 
-    if (changedFieldReferenceName === CascadingFieldsService.featureNameField) {
+    if (changedFieldReferenceName === this.featureFieldRefs.featureName) {
       await this.cascadeFromFeatureName();
     }
   }
 
   public async performCascading(changedFieldReferenceName: string): Promise<void[]> {
     if (
-      changedFieldReferenceName === CascadingFieldsService.moduleField ||
-      changedFieldReferenceName === CascadingFieldsService.featureNameField
+      changedFieldReferenceName === this.featureFieldRefs.module ||
+      changedFieldReferenceName === this.featureFieldRefs.featureName
     ) {
       await this.performFeatureCatalogueCascading(changedFieldReferenceName);
     }

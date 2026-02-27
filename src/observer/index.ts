@@ -41,7 +41,11 @@ SDK.init({
     }
     let originalReasonValue;
     let hasBeenResolvedAlready = false;
-    const cascadingService = new CascadingFieldsService(workItemFormService, manifest.cascades);
+    const cascadingService = new CascadingFieldsService(
+      workItemFormService,
+      manifest.cascades,
+      manifest.featureCatalogue
+    );
     const provider: IWorkItemNotificationListener = {
       onLoaded: async (workItemLoadedArgs: IWorkItemLoadedArgs) => {
         try {

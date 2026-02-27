@@ -87,6 +87,38 @@ Create/update these fields in your process:
 - Extension updates this automatically from feature leaf mapping
 - If feature is not chosen yet, module defaults may apply when unambiguous
 
+## Configurable Field References (No Hardcoded IDs Required)
+
+Feature catalogue automation no longer requires fixed field IDs.  
+You can configure all field refs in the extension manifest JSON saved in the project admin hub.
+
+Manifest example:
+
+```json
+{
+  "version": "1",
+  "cascades": {},
+  "featureCatalogue": {
+    "fields": {
+      "module": "Custom.ProductModule",
+      "featureName": "Custom.ProductFeature",
+      "featureId": "Custom.ProductFeatureId",
+      "category": "Custom.DerivedProductCategory",
+      "areaPath": "System.AreaPath"
+    }
+  }
+}
+```
+
+Notes:
+- If `featureCatalogue.fields` is omitted, defaults are used:
+  - `Custom.Module`
+  - `Custom.FeatureName`
+  - `Custom.FeatureID`
+  - `Custom.Category`
+  - `System.AreaPath`
+- You can mix custom and default refs (only override fields you need).
+
 ## Mapping Model
 
 The generated mapping lives at:
@@ -175,6 +207,127 @@ Run extension locally:
 ```bash
 npm run start
 ```
+
+## End-to-End Setup and Example Flow
+
+This section walks through the full test cycle in Azure DevOps from extension packaging to creating a real work item and validating behavior.
+
+### 1. Prepare the extension package
+
+From the repo root:
+
+```bash
+npm install
+npm run generate:feature-catalogue-mapping
+npm run test:unit
+npm run build-dev
+npm run package-dev
+```
+
+Expected result:
+- A `.vsix` file is generated in the repository root.
+
+### 2. Install extension into Azure DevOps org
+
+1. Go to Azure DevOps `Organization settings` -> `Extensions` -> `Manage extensions`.
+2. Select `Upload extension`.
+3. Upload the `.vsix` created above.
+4. Install it to your target organization.
+
+If upload fails due to version conflict:
+1. Increase `version` in `azure-devops-extension.json`.
+2. Run `npm run build-dev` and `npm run package-dev` again.
+3. Upload the new `.vsix`.
+
+### 3. Create/verify process fields
+
+In your inherited process, create fields that you want to use.
+
+Recommended field set:
+- Module field (picklist, required)
+- Feature Name field (picklist, required)
+- Feature ID field (string, read-only on form)
+- Derived Category field (string/picklist, read-only on form)
+- Source field (manual, not automated)
+
+Important:
+- `Feature Name` picklist must contain the superset of all feature names from mapping.
+- Area paths referenced by mapping must exist in the project.
+
+### 4. Add fields to work item form
+
+1. Open process customization for your target work item type.
+2. Add fields to the layout.
+3. Set read-only/hidden behavior for derived fields (`Feature ID`, derived `Category`) per your policy.
+4. Keep manual `Source` editable.
+
+### 5. Configure extension manifest in project hub
+
+1. Open project admin hub `Cascading Lists`.
+2. Paste/update manifest JSON with your field references.
+3. Save configuration.
+
+Example with custom refs:
+
+```json
+{
+  "version": "1",
+  "cascades": {},
+  "featureCatalogue": {
+    "fields": {
+      "module": "Custom.ProductModule",
+      "featureName": "Custom.ProductFeature",
+      "featureId": "Custom.ProductFeatureId",
+      "category": "Custom.DerivedProductCategory",
+      "areaPath": "System.AreaPath"
+    }
+  }
+}
+```
+
+### 6. Execute the example ticket flow
+
+Open a new work item and follow this sequence:
+
+1. Select module:
+- Example: `Rental`
+- Expected:
+  - `Feature Name` list is filtered to rental features only
+  - `Feature Name` value is cleared
+  - `Feature ID` is cleared
+  - derived `Category`/`AreaPath` may get module defaults if unambiguous
+
+2. Select feature:
+- Example: `Rental Contract`
+- Expected:
+  - `Feature ID` becomes `RENT-007`
+  - derived `Category` becomes `Rental`
+  - `AreaPath` becomes `Modules`
+
+3. Validate ambiguous module behavior:
+- Set module to `Actions on Mobile App`
+- Choose feature `Case View`
+  - Expected derived `Category`: `Support`
+- Choose feature `Equipment Page`
+  - Expected derived `Category`: `CMMS`
+
+This confirms category is derived from leaf mapping, not from module alone.
+
+### 7. Save and regression-check
+
+1. Save the work item.
+2. Refresh/reopen the item.
+3. Confirm derived values remain consistent.
+4. Change module again and verify dependent resets happen as expected.
+
+### 8. Rollout checklist for production
+
+1. Freeze mapping source workbook version.
+2. Regenerate mapping JSON and commit.
+3. Run unit tests and build.
+4. Package and upload new `.vsix`.
+5. Update process/forms and manifest config per project.
+6. Smoke test with at least one scenario per major module.
 
 ## Testing
 
