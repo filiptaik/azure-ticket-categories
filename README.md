@@ -11,6 +11,7 @@ Then the extension automatically derives:
 - `System.AreaPath`
 
 The mapping is generated from an Excel catalogue and stored as JSON in the repo.
+The same mapping can also be stored directly in the project manifest in Azure DevOps for rapid updates without extension rebuilds.
 
 ## What This Solves
 
@@ -105,6 +106,9 @@ Manifest example:
       "featureId": "Custom.ProductFeatureId",
       "category": "Custom.DerivedProductCategory",
       "areaPath": "System.AreaPath"
+    },
+    "mapping": {
+      "modules": {}
     }
   }
 }
@@ -118,11 +122,18 @@ Notes:
   - `Custom.Category`
   - `System.AreaPath`
 - You can mix custom and default refs (only override fields you need).
+- `featureCatalogue.mapping` is optional. If omitted, bundled repo mapping is used.
 
 ## Mapping Model
 
-The generated mapping lives at:
+Generated mapping file in repo:
 - `src/common/mappings/feature-catalogue.mapping.json`
+
+Runtime precedence:
+1. `featureCatalogue.mapping` from project manifest (configured in ADO hub)
+2. Fallback bundled mapping file above
+
+This means mapping-only changes can be made in ADO config hub and take effect without publishing a new extension package.
 
 Shape:
 
@@ -170,6 +181,41 @@ What it does:
 - Creates `features` map under each module
 - Computes module defaults only when category/area are unambiguous
 - Writes JSON to the target path
+
+### Using generated mapping without rebuilding extension
+
+After generating `feature-catalogue.mapping.json`, copy its `modules` object into the project manifest under `featureCatalogue.mapping`:
+
+```json
+{
+  "version": "1",
+  "cascades": {},
+  "featureCatalogue": {
+    "fields": {
+      "module": "Custom.ProductModule",
+      "featureName": "Custom.ProductFeature",
+      "featureId": "Custom.ProductFeatureId",
+      "category": "Custom.DerivedProductCategory",
+      "areaPath": "System.AreaPath"
+    },
+    "mapping": {
+      "modules": {
+        "Rental": {
+          "features": {
+            "Rental Contract": {
+              "featureId": "RENT-007",
+              "category": "Rental",
+              "area": "Modules"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+Save in the hub. No extension rebuild/redeploy is required for mapping-only updates.
 
 ## Local Development Guide
 
@@ -224,6 +270,10 @@ npm run generate:feature-catalogue-mapping
 3. Confirm mapping file changed as expected:
 - `src/common/mappings/feature-catalogue.mapping.json`
 - Verify target module/feature entries exist and contain expected `featureId`, `category`, and `area`.
+4. Copy mapping into ADO manifest (`featureCatalogue.mapping.modules`) and save.
+
+If you only changed mapping data (not extension code), stop here and test in work items.
+No rebuild/package/upload is needed.
 
 ### 2. Prepare the extension package
 
@@ -238,6 +288,8 @@ npm run package-dev
 
 Expected result:
 - A `.vsix` file is generated in the repository root.
+
+Use this step only when extension code changed.
 
 ### 3. Install extension into Azure DevOps org
 

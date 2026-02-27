@@ -48,12 +48,28 @@ class CascadingFieldsService {
   ) {
     this.workItemService = workItemService;
     this.cascadeMap = this.createCascadingMap(cascadeConfiguration);
-    this.featureCatalogue = featureCatalogueMapping as IFeatureCatalogueMapping;
+    this.featureCatalogue = this.resolveFeatureCatalogueMapping(featureCatalogueConfiguration);
     this.featureFieldRefs = {
       ...CascadingFieldsService.defaultFeatureCatalogueFieldRefs,
       ...(featureCatalogueConfiguration?.fields || {}),
     };
     this.applyFeatureCatalogueOnLoad();
+  }
+
+  private resolveFeatureCatalogueMapping(
+    featureCatalogueConfiguration?: IFeatureCatalogueConfiguration
+  ): IFeatureCatalogueMapping {
+    const runtimeMapping = featureCatalogueConfiguration?.mapping;
+    if (
+      runtimeMapping &&
+      typeof runtimeMapping === 'object' &&
+      runtimeMapping.modules &&
+      typeof runtimeMapping.modules === 'object'
+    ) {
+      return runtimeMapping;
+    }
+
+    return featureCatalogueMapping as IFeatureCatalogueMapping;
   }
 
   private async applyFeatureCatalogueOnLoad(): Promise<void> {

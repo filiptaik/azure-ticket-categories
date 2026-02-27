@@ -1,3 +1,5 @@
+import type { IFeatureCatalogueMapping } from './feature-catalogue';
+
 export type FieldName = string;
 export type FieldOptions = Record<FieldName, string[] | FieldOptionsFlags>;
 export type CascadeConfiguration = Record<FieldName, Record<FieldName, FieldOptions>>;
@@ -27,4 +29,5 @@ export interface IFeatureCatalogueFieldRefs {
 
 export interface IFeatureCatalogueConfiguration {
   fields?: IFeatureCatalogueFieldRefs;
+  mapping?: IFeatureCatalogueMapping;
 }

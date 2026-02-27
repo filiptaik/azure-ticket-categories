@@ -43,7 +43,12 @@ class ManifestService {
 }
 
 class ManifestValidationService {
-  private validators: Validator[] = [this.checkVersion, this.checkCascadesType, this.checkCascades];
+  private validators: Validator[] = [
+    this.checkVersion,
+    this.checkCascadesType,
+    this.checkFeatureCatalogueType,
+    this.checkCascades,
+  ];
   private requiredProperties = ['version', 'cascades'];
 
   private cascadeValidator: CascadeValidationService;
@@ -127,6 +132,47 @@ class ManifestValidationService {
         description: `Invalid field refs: ${errors.join(', ')}`,
       };
     }
+    return null;
+  }
+
+  private async checkFeatureCatalogueType(
+    manifest: IManifest
+  ): Promise<null | IManifestValidationError> {
+    if (typeof manifest.featureCatalogue === 'undefined') {
+      return null;
+    }
+
+    if (typeof manifest.featureCatalogue !== 'object' || Array.isArray(manifest.featureCatalogue)) {
+      return {
+        code: ValidationErrorCode.InvalidCascadeType,
+        description: '"featureCatalogue" should be an object',
+      };
+    }
+
+    const fields = manifest.featureCatalogue.fields;
+    if (typeof fields !== 'undefined' && (typeof fields !== 'object' || Array.isArray(fields))) {
+      return {
+        code: ValidationErrorCode.InvalidCascadeType,
+        description: '"featureCatalogue.fields" should be an object',
+      };
+    }
+
+    const mapping = manifest.featureCatalogue.mapping;
+    if (typeof mapping !== 'undefined') {
+      if (typeof mapping !== 'object' || Array.isArray(mapping)) {
+        return {
+          code: ValidationErrorCode.InvalidCascadeType,
+          description: '"featureCatalogue.mapping" should be an object',
+        };
+      }
+      if (typeof (mapping as any).modules !== 'object' || Array.isArray((mapping as any).modules)) {
+        return {
+          code: ValidationErrorCode.InvalidCascadeType,
+          description: '"featureCatalogue.mapping.modules" should be an object',
+        };
+      }
+    }
+
     return null;
   }
 }
