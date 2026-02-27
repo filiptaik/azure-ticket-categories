@@ -212,13 +212,25 @@ npm run start
 
 This section walks through the full test cycle in Azure DevOps from extension packaging to creating a real work item and validating behavior.
 
-### 1. Prepare the extension package
+### 1. Update source catalogue and regenerate mapping
+
+1. Update the Excel catalogue used as source of truth.
+2. Regenerate mapping JSON:
+
+```bash
+npm run generate:feature-catalogue-mapping
+```
+
+3. Confirm mapping file changed as expected:
+- `src/common/mappings/feature-catalogue.mapping.json`
+- Verify target module/feature entries exist and contain expected `featureId`, `category`, and `area`.
+
+### 2. Prepare the extension package
 
 From the repo root:
 
 ```bash
 npm install
-npm run generate:feature-catalogue-mapping
 npm run test:unit
 npm run build-dev
 npm run package-dev
@@ -227,7 +239,7 @@ npm run package-dev
 Expected result:
 - A `.vsix` file is generated in the repository root.
 
-### 2. Install extension into Azure DevOps org
+### 3. Install extension into Azure DevOps org
 
 1. Go to Azure DevOps `Organization settings` -> `Extensions` -> `Manage extensions`.
 2. Select `Upload extension`.
@@ -239,7 +251,7 @@ If upload fails due to version conflict:
 2. Run `npm run build-dev` and `npm run package-dev` again.
 3. Upload the new `.vsix`.
 
-### 3. Create/verify process fields
+### 4. Create/verify process fields
 
 In your inherited process, create fields that you want to use.
 
@@ -254,14 +266,14 @@ Important:
 - `Feature Name` picklist must contain the superset of all feature names from mapping.
 - Area paths referenced by mapping must exist in the project.
 
-### 4. Add fields to work item form
+### 5. Add fields to work item form
 
 1. Open process customization for your target work item type.
 2. Add fields to the layout.
 3. Set read-only/hidden behavior for derived fields (`Feature ID`, derived `Category`) per your policy.
 4. Keep manual `Source` editable.
 
-### 5. Configure extension manifest in project hub
+### 6. Configure extension manifest in project hub
 
 1. Open project admin hub `Feature Catalogue Automation`.
 2. Paste/update manifest JSON with your field references.
@@ -285,7 +297,7 @@ Example with custom refs:
 }
 ```
 
-### 6. Execute the example ticket flow
+### 7. Execute the example ticket flow
 
 Open a new work item and follow this sequence:
 
@@ -313,14 +325,14 @@ Open a new work item and follow this sequence:
 
 This confirms category is derived from leaf mapping, not from module alone.
 
-### 7. Save and regression-check
+### 8. Save and regression-check
 
 1. Save the work item.
 2. Refresh/reopen the item.
 3. Confirm derived values remain consistent.
 4. Change module again and verify dependent resets happen as expected.
 
-### 8. Rollout checklist for production
+### 9. Rollout checklist for production
 
 1. Freeze mapping source workbook version.
 2. Regenerate mapping JSON and commit.
