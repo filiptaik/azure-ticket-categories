@@ -12,6 +12,100 @@ You can use it for many scenarios, for example:
 
 Mapping can be edited directly in Azure DevOps, so mapping-only updates do not require rebuilding/redeploying the extension.
 
+## Start-To-Finish Setup Guide
+
+### 1. Create ADO fields
+
+Create these fields in your inherited process (use your own reference names):
+- Parent field (picklist string)
+- Child field (picklist string)
+- Derived ID field (string)
+- Derived category/type field (string or picklist)
+- Optional derived path field (`System.AreaPath` or your own string field)
+
+Example refs:
+- `Custom.ParentField`
+- `Custom.ChildField`
+- `Custom.DerivedIdField`
+- `Custom.DerivedCategoryField`
+- `System.AreaPath`
+
+### 2. Add field values
+
+Populate picklist values in your process:
+- Parent field: all parent options (for example `Region A`, `Region B`)
+- Child field: superset of all child options across all parents
+
+Notes:
+- Child filtering is done by extension at runtime.
+- If child values are missing from the picklist definition, they cannot be selected.
+
+### 3. Get extension
+
+Install/publish the extension into your Azure DevOps organization.
+
+Then open:
+- Project Settings -> `Feature Catalogue Automation` hub
+
+### 4. Configure manifest
+
+Paste/save manifest JSON in the hub.
+
+```json
+{
+  "version": "1",
+  "cascades": {},
+  "featureCatalogue": {
+    "fields": {
+      "module": "Custom.ParentField",
+      "featureName": "Custom.ChildField",
+      "featureId": "Custom.DerivedIdField",
+      "category": "Custom.DerivedCategoryField",
+      "areaPath": "System.AreaPath"
+    },
+    "mapping": {
+      "modules": {
+        "Parent Value A": {
+          "features": {
+            "Child Value 1": {
+              "featureId": "ID-001",
+              "category": "Category-A",
+              "area": "Path\\AreaA"
+            },
+            "Child Value 2": {
+              "featureId": "ID-002",
+              "category": "Category-B",
+              "area": "Path\\AreaB"
+            }
+          },
+          "defaults": {
+            "category": "Category-A",
+            "area": "Path\\AreaA"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+Quick check:
+1. Open a work item.
+2. Set parent.
+3. Confirm child list is filtered.
+4. Set child.
+5. Confirm derived fields auto-fill.
+
+### 5. Update mapping later
+
+For rapid business changes (no rebuild/redeploy):
+1. Open `Feature Catalogue Automation` hub.
+2. Edit `featureCatalogue.mapping.modules`.
+3. Save.
+4. Refresh work item form.
+
+Changes take effect immediately.
+
 ## Core Concept
 
 The extension works with a parent-child structure:
