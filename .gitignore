@@ -77,3 +77,6 @@ openssl.conf
 
 # Ignore webpack build
 dist/
+
+# Ignore .vsix files
+*.vsix
