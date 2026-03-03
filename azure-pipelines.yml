@@ -4,13 +4,13 @@ variables:
 - name: minor
   value: '1'
 - name: extensionName
-  value: 'cascading-picklists-extension'
+  value: 'feature-catalogue-automation'
 - name: marketplaceServiceConnection
   value: 'marketplaceServiceConnection'
 - name: publisherId
   value: 'ms-devlabs'
 - name: publicExtensionName
-  value: "Cascading Lists"
+  value: "Feature Catalogue Automation"
 
 name: $(major).$(minor)$(rev:.r)
 

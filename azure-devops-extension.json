@@ -1,9 +1,9 @@
 {
   "manifestVersion": 1.0,
-  "id": "cascading-picklists-extension",
+  "id": "feature-catalogue-automation",
   "publisher": "FTShepherdCMMS",
   "version": "1.0.6",
-  "name": "Grouped Picklist Values",
+  "name": "Feature Catalogue Automation",
   "description": "Extension allows to filter, and autoselect picklist values based on a different lists value",
   "categories": [
     "Azure Boards"

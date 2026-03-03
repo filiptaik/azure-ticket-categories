@@ -1,6 +1,6 @@
 {
-    "id": "cascading-picklists-extension-dev",
-    "name": "Cascading Lists (dev)",
+    "id": "feature-catalogue-automation-dev",
+    "name": "Feature Catalogue Automation (dev)",
     "publisher": "FTShepherdCMMS",
     "public": false,
     "baseUri": "https://localhost:44300"
