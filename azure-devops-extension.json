@@ -1,8 +1,8 @@
 {
-  "manifestVersion": 1.0,
+  "manifestVersion": 1,
   "id": "feature-catalogue-automation",
   "publisher": "FTShepherdCMMS",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "name": "Feature Catalogue Automation",
   "description": "Extension allows to filter, and autoselect picklist values based on a different lists value",
   "categories": [
