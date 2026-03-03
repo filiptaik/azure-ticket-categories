@@ -42,6 +42,12 @@ Notes:
 
 ### 3. Get extension
 
+Build and package the extension locally:
+
+```bash
+npm run release:full
+```
+
 Install/publish the extension into your Azure DevOps organization.
 
 Then open:
