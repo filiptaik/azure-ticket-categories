@@ -31,33 +31,41 @@ Cascading picklists are made up of two seperate fields. The parent field and a c
 
    ![image](images/settings-hub-1.png)
 
-From here you can configure the JSON rules that drive how the cascading picklist would work. Below is the sample for Major and Minor releases.
+From here you can configure the JSON rules that drive feature catalogue mapping. Below is a sample manifest.
 
    ```json
    {
-     "version": "1.0",
-     "cascades": {
-       "Custom.MajorRelease": {
-         "Release Blue": {
-           "Custom.MinorRelease": [
-             "Blue.1",
-             "Blue.2",
-             "Blue.3"
-           ]
-         },
-         "Release Red": {
-           "Custom.MinorRelease": [
-             "Red.A",
-             "Red.B",
-             "Red.C"
-           ]
+     "version": "1",
+     "featureCatalogue": {
+       "fields": {
+         "module": "Custom.Module",
+         "featureName": "Custom.FeatureName",
+         "featureId": "Custom.FeatureID",
+         "category": "Custom.Category",
+         "areaPath": "System.AreaPath"
+       },
+       "mapping": {
+         "modules": {
+           "Mobile": {
+             "features": {
+               "Create Case": {
+                 "featureId": "MOB-001",
+                 "category": "FSM",
+                 "area": "Product\\Mobile\\Cases"
+               }
+             },
+             "defaults": {
+               "category": "FSM",
+               "area": "Product\\Mobile"
+             }
+           }
          }
        }
      }
    }
    ```
 
-4. Go create a new Feature work item to see it in action. Select "Release Blue" and notice how only the blue values are displayed in the Minor Release field. Select "Release Red" and you will only see the Red minor release items.
+4. Go create a new work item to see it in action. Select a module and then a feature. The extension will populate Feature ID, Category and Area Path from mapping.
 
    ![picklist demo](images/picklist-demo.gif)
 

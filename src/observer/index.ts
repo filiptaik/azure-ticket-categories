@@ -43,14 +43,13 @@ SDK.init({
     let hasBeenResolvedAlready = false;
     const cascadingService = new CascadingFieldsService(
       workItemFormService,
-      manifest.cascades,
       manifest.featureCatalogue
     );
     const provider: IWorkItemNotificationListener = {
       onLoaded: async (workItemLoadedArgs: IWorkItemLoadedArgs) => {
         try {
-          if (!manifest || !manifest.cascades || workItemLoadedArgs.isNew) {
-            console.warn('Manifest is missing, does not contain cascades or it is a new work item');
+          if (!manifest || workItemLoadedArgs.isNew) {
+            console.warn('Manifest is missing or it is a new work item');
             return;
           }
           await cascadingService.getconfigFieldValues();
@@ -65,7 +64,6 @@ SDK.init({
         }
       },
       onSaved: async (savedEventArgs: IWorkItemChangedArgs) => {
-        await cascadingService.cascadeAll();
         try {
 
           const workItemId = savedEventArgs.id;
@@ -76,9 +74,9 @@ SDK.init({
           console.error('Error in onSaved event:', error);
         }
       },
-      onRefreshed: async () => await cascadingService.cascadeAll(),
-      onReset: async () => await cascadingService.cascadeAll(),
-      onUnloaded: async () => await cascadingService.resetAllCascades(),
+      onRefreshed: async () => await cascadingService.getconfigFieldValues(),
+      onReset: async () => await cascadingService.getconfigFieldValues(),
+      onUnloaded: async () => undefined,
       onFieldChanged: async (fieldChangedArgs: IWorkItemFieldChangedArgs) => {
         await cascadingService.performCascading(Object.keys(fieldChangedArgs.changedFields)[0]);
       },

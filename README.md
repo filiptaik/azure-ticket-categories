@@ -60,7 +60,6 @@ Paste/save manifest JSON in the hub.
 ```json
 {
   "version": "1",
-  "cascades": {},
   "featureCatalogue": {
     "fields": {
       "module": "Custom.ParentField",
@@ -137,7 +136,6 @@ Use this as a starting point:
 ```json
 {
   "version": "1",
-  "cascades": {},
   "featureCatalogue": {
     "fields": {
       "module": "Custom.ParentField",
